@@ -12,6 +12,22 @@ import {
 } from '@ant-design/icons';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
+const ProtectedMenuItem = ({ to, requiredAccess, icon, label, ...props }) => {
+    const { user } = useStateContext();
+  
+    // Always display if no access is required
+    const hasAccess = !requiredAccess || (user && user.accesses && user.accesses.some(access => access.akses === requiredAccess));
+  
+    if (!hasAccess) {
+      return null;
+    }
+  
+    return (
+      <Menu.Item key={props.key} icon={icon} onClick={() => props.onClick({ key: props.key })}>
+        <Link to={to}>{label}</Link>
+      </Menu.Item>
+    );
+  };
 
 const DefaultLayout2 = () => {
     const { user, token, notification, setUser, setToken, setNotification } = useStateContext()
@@ -47,18 +63,20 @@ const DefaultLayout2 = () => {
 
     const menus = [
         {
-            label: 'Dashboard',
-            key: '1',
-            icon: <PieChartOutlined />,
-            path: '/dashboard'
+          key: '1',
+          label: 'Dashboard',
+          icon: <PieChartOutlined />,
+          path: '/dashboard',
+          access: null  // No access required for this item
         },
         {
-            label: 'Users',
-            key: '2',
-            icon: <DesktopOutlined />,
-            path: '/users'
+          key: '2',
+          label: 'Users',
+          icon: <DesktopOutlined />,
+          path: '/users',
+          access: 'userManagement'  // Specify the required access for this menu item
         }
-    ]
+      ];
     const [collapsed, setCollapsed] = useState(false);
     const [breadcrumMenu, setBreadcrumMenu] = useState([]);
     const [breadcrumMenuItem, setBreadcrumMenuItem] = useState([]);
@@ -73,7 +91,18 @@ const DefaultLayout2 = () => {
         >
             <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
                 <div className="demo-logo-vertical" />
-                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={menus} onClick={onClick} />
+                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" onClick={onClick}>
+          {menus.map(menu => (
+            <ProtectedMenuItem
+              key={menu.key}
+              to={menu.path}
+              requiredAccess={menu.access}
+              icon={menu.icon}
+              label={menu.label}
+              onClick={onClick}
+            />
+          ))}
+        </Menu>
             </Sider>
             <Layout>
                 <Header
