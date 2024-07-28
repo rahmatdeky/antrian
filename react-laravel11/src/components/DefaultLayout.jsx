@@ -3,6 +3,7 @@ import { Link, Navigate, Outlet } from 'react-router-dom'
 import { useStateContext } from '../contexts/ContextProvider'
 import axiosClient from '../axios-client'
 import ProtectedLink from './ProtectedLink'
+import { Button } from "antd";
 
 export default function DefaultLayout() {
     const { user, token, notification, setUser, setToken, setNotification } = useStateContext()
@@ -29,8 +30,9 @@ export default function DefaultLayout() {
     return (
         <div id="defaultLayout" >
             <aside>
-                <Link to="/dashboard">Dashboard</Link>
-                {/* <ProtectedLink to="/dashboard" requiredAccess="">Dashboard</ProtectedLink> */}
+                <Link to="/dashboard">
+                    <Button type='primary'>Dashboard</Button>
+                </Link>
                 <ProtectedLink to="/users" requiredAccess="userManagement">Users</ProtectedLink>
             </aside>
             <div className='content'>
