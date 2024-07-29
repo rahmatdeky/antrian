@@ -4,18 +4,17 @@ import { useStateContext } from '../contexts/ContextProvider';
 import axiosClient from '../axios-client';
 import {
     DesktopOutlined,
-    FileOutlined,
     PieChartOutlined,
     TeamOutlined,
     UserOutlined,
 } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu, theme, Row, Col, Button, Dropdown, Skeleton, Flex } from 'antd';
+import { Layout, Menu, theme, Row, Col, Button, Dropdown, Skeleton, Flex } from 'antd';
+
 const { Header, Content, Footer, Sider } = Layout;
 
 const ProtectedMenuItem = ({ key, to, requiredAccess, icon, label, children }) => {
     const { user } = useStateContext();
 
-    // Always display if no access is required
     const hasAccess = !requiredAccess || (user && user.accesses && user.accesses.some(access => access.akses === requiredAccess));
 
     if (!hasAccess) {
@@ -33,10 +32,8 @@ const ProtectedMenuItem = ({ key, to, requiredAccess, icon, label, children }) =
 const DefaultLayout2 = () => {
     const { user, token, setUser, setToken } = useStateContext();
     const navigate = useNavigate();
-    const location = useLocation(); // To get the current route
+    const location = useLocation();
     const [collapsed, setCollapsed] = useState(false);
-    const [breadcrumMenu, setBreadcrumMenu] = useState('Dashboard');
-    const [breadcrumMenuItem, setBreadcrumMenuItem] = useState('');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -54,20 +51,6 @@ const DefaultLayout2 = () => {
         }
     }, [token]);
 
-    useEffect(() => {
-        const currentPath = location.pathname;
-        const item = findMenuItem(menus, currentPath);
-        if (item) {
-            if (item.parentLabel) {
-                setBreadcrumMenu(item.parentLabel);
-                setBreadcrumMenuItem(item.label);
-            } else {
-                setBreadcrumMenu(item.label);
-                setBreadcrumMenuItem('');
-            }
-        }
-    }, [location.pathname]);
-
     const onLogout = () => {
         axiosClient.post('/logout')
             .then(() => {
@@ -83,24 +66,17 @@ const DefaultLayout2 = () => {
     const onClick = (e) => {
         const item = findMenuItem(menus, e.key);
         if (item) {
-            if (item.parentLabel) {
-                setBreadcrumMenu(item.parentLabel);
-                setBreadcrumMenuItem(item.label);
-            } else {
-                setBreadcrumMenu(item.label);
-                setBreadcrumMenuItem('');
-            }
             navigate(item.path);
         }
     };
 
-    const findMenuItem = (menus, path, parentLabel = '') => {
+    const findMenuItem = (menus, key) => {
         for (const menu of menus) {
-            if (menu.path === path) {
-                return { ...menu, parentLabel };
+            if (menu.key === key) {
+                return menu;
             }
             if (menu.children) {
-                const found = findMenuItem(menu.children, path, menu.label);
+                const found = findMenuItem(menu.children, key);
                 if (found) {
                     return found;
                 }
@@ -133,7 +109,7 @@ const DefaultLayout2 = () => {
                 {
                     key: '3',
                     label: 'Team 1',
-                    path: '/dashboard',
+                    path: '/team1',
                     access: 'userManagement'
                 },
                 {
@@ -221,7 +197,7 @@ const DefaultLayout2 = () => {
                 <div className="demo-logo-vertical" />
                 <Menu
                     theme="dark"
-                    defaultSelectedKeys={[menus.find(menu => menu.path === location.pathname).key]}
+                    defaultSelectedKeys={[menus.find(menu => menu.path === location.pathname)?.key]}
                     mode="inline"
                     items={protectedMenus}
                     onClick={onClick}
@@ -252,22 +228,9 @@ const DefaultLayout2 = () => {
                 </Header>
                 <Content
                     style={{
-                        margin: '0 16px',
+                        margin: '30px 16px',
                     }}
                 >
-                    <Breadcrumb
-                        items={[
-                            {
-                                title: <FileOutlined />,
-                            },
-                            {
-                                title: <span>{breadcrumMenu}</span>,
-                            },
-                            ...(breadcrumMenuItem ? [{
-                                title: <span>{breadcrumMenuItem}</span>
-                            }] : [])
-                        ]}
-                    />
                     <div
                         style={{
                             padding: 24,

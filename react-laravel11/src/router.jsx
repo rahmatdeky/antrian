@@ -9,6 +9,8 @@ import Dashboard from './views/Dashboard';
 import UserForm from './views/UserForm';
 import Forbidden from './views/Forbidden';
 import ProtectedRoute from './components/protectedRoute';
+import Team1 from './views/team1';
+import Team2 from './views/team2';
 
 const router = createBrowserRouter([
     {
@@ -39,6 +41,14 @@ const router = createBrowserRouter([
             {
                 path: "/dashboard",
                 element: <Dashboard />,
+            },
+            {
+                path: "/team1",
+                element: <Team1 />,
+            },
+            {
+                path: "/team2",
+                element: <Team2 />,
             },
         ],
     },
