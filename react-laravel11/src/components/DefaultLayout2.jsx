@@ -47,6 +47,7 @@ const DefaultLayout2 = () => {
                     setLoading(false);
                 });
         } else {
+            navigate('/login');
             setLoading(false);
         }
     }, [token]);
