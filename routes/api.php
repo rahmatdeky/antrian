@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UserController2;
+use App\Http\Controllers\Notification\NotificationController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -16,6 +17,7 @@ Route::middleware('auth:sanctum')->group(function() {
     // Route::get('/users', [UserController2::class, 'index']);
 
     Route::apiResource('/users', UserController::class);
+    Route::post('/notif/store', [NotificationController::class, 'store']);
 });
 
 Route::post('/signup', [AuthController::class, 'signup']);
