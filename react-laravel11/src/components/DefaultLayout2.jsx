@@ -45,9 +45,12 @@ const DefaultLayout2 = () => {
                 })
                 .catch(() => {
                     setLoading(false);
+                    setToken(null);
+                    navigate('/login');
                 });
         } else {
             navigate('/login');
+            setToken(null);
             setLoading(false);
         }
     }, [token]);
