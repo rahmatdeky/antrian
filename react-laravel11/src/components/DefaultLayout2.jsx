@@ -46,10 +46,10 @@ const DefaultLayout2 = () => {
                 .catch(() => {
                     setLoading(false);
                     setToken(null);
-                    navigate('/login');
+                    navigate('/landing');
                 });
         } else {
-            navigate('/login');
+            navigate('/landing');
             setToken(null);
             setLoading(false);
         }
@@ -60,7 +60,7 @@ const DefaultLayout2 = () => {
             .then(() => {
                 setUser(null);
                 setToken(null);
-                navigate('/login');
+                navigate('/landing');
             })
             .catch(error => {
                 console.error("Logout error:", error);

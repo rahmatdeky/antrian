@@ -11,6 +11,7 @@ import Forbidden from './views/Forbidden';
 import ProtectedRoute from './components/protectedRoute';
 import Team1 from './views/team1';
 import Team2 from './views/team2';
+import LandingPage from './views/LandingPage/LandingPage';
 
 const router = createBrowserRouter([
     {
@@ -57,9 +58,17 @@ const router = createBrowserRouter([
         element: <GuestLayout />,
         children: [
             {
+                path: "/",
+                element: <Navigate to="/landing" />,
+            },
+            {
                 path: "/login",
                 element: <Login />,
             },
+            {
+                path: "/landing",
+                element: <LandingPage />,
+            }
             // {
             //     path: "/signup",
             //     element: <Signup />,
