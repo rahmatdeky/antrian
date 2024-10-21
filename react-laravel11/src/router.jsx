@@ -12,6 +12,7 @@ import ProtectedRoute from './components/protectedRoute';
 import Team1 from './views/team1';
 import Team2 from './views/team2';
 import LandingPage from './views/LandingPage/LandingPage';
+import LandingPageAntrian from './views/LandingPage/Antrian/LandingPageAntrian';
 
 const router = createBrowserRouter([
     {
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
             {
                 path: "/landing",
                 element: <LandingPage />,
+            },
+            {
+                path: "/landing/antrian",
+                element: <LandingPageAntrian />,
             }
             // {
             //     path: "/signup",

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { Row, Col, Button, Flex, Card, FloatButton } from 'antd';
-import { LoginOutlined } from '@ant-design/icons';
 import "./LandingPage.css";
 
 const LandingPage = () => {
@@ -70,7 +70,6 @@ const cardInformation = [
 ];
 const scrollToAmbilAntrianRef = useRef(null);
 const scrollToInformasiRef = useRef(null);
-const scrollToLoginRef = useRef(null);
 
 const handleScrollToAmbilAntrian = () => {
   scrollToAmbilAntrianRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -80,12 +79,9 @@ const handleScrollToInformasi = () => {
   scrollToInformasiRef.current.scrollIntoView({ behavior: 'smooth' });
 }
 
-const handleScrollToLogin = () => {
-  scrollToLoginRef.current.scrollIntoView({ behavior: 'smooth' });
-}
-
   return (
     <>
+    <div className='landing-page'>
       <Flex className="badge" vertical>
         <Flex className="badge-text" justify="center" vertical>
           <h1>Antrian Loket Pelayanan</h1>
@@ -94,7 +90,11 @@ const handleScrollToLogin = () => {
         <Flex className="badge-button" align="center" justify="space-around">
           <Button className="button-badge" onClick={handleScrollToAmbilAntrian} >AMBIL ANTRIAN</Button>
           <Button className="button-badge-2" onClick={handleScrollToInformasi}>INFORMASI LOKET PELAYANAN</Button>
-          <Button className="button-badge">LIHAT ANTRIAN</Button>
+            <Link to="/landing/antrian">
+              <Button className="button-badge">
+                LIHAT ANTRIAN
+              </Button>
+            </Link>
         </Flex>
       </Flex>
       <Card bordered={false} className='card-antrian'>
@@ -121,6 +121,7 @@ const handleScrollToLogin = () => {
           ))}
         </div>
       </Card>
+    </div>
     </>
   );
 };
