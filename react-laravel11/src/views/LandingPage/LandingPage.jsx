@@ -121,14 +121,6 @@ const handleScrollToLogin = () => {
           ))}
         </div>
       </Card>
-      <Row justify="center">
-        <Col span={10}>
-          <Button ref={scrollToLoginRef} className="button-login" block>Login Petugas <LoginOutlined></LoginOutlined> </Button>
-        </Col>
-      </Row>
-      <FloatButton style={{
-        insetInlineEnd: 24,
-      }} onClick={handleScrollToLogin} className="float-button" type='primary' title="scroll ke login petugas" icon={<LoginOutlined />}></FloatButton>
     </>
   );
 };

@@ -21,8 +21,13 @@ body {
 }
 
 .badge {
-  background-color: #7DBAF2;
-  color: white;
+  /* background-color: #7DBAF2; */
+  background-image: url('../../../public/img/foto-kantor.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  color: black;
   width: 100%;
   min-height: 400px;
 }
