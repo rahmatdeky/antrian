@@ -13,6 +13,7 @@
   .card {
     margin: 20px;
     padding: 0;
+    box-shadow: 0 10px 8px rgba(0, 0, 0, 0.1);
   }
   
   /* Tambahkan card tambahan (selengkapnya) */
@@ -29,6 +30,87 @@
     font-size: 18px;
     color: #FFFFFF;
     cursor: pointer;
+  }
+
+  .card1-3 {
+    border: 10px solid #E1C916
+  }
+
+  .col-loket-dipanggil {
+    padding: 20px 20px 0 20px
+  }
+  .col-loket-dipanggil-1 {
+    padding: 20px 20px 0 20px
+  }
+
+  .card-loket-dipanggil {
+    background-color: #E9DC7B; 
+    height: 100%;
+  }
+
+  .h1-loket-dipanggil {
+    font-size: 96px;
+    text-align: center;
+  }
+
+  .card-waktu-dipanggil {
+    background-color: #DB8181
+  }
+
+  .h1-waktu-dipanggil {
+    font-size: 32px;
+    text-align: center
+  }
+
+  .h1-dilayani-oleh {
+    color: #555555
+  }
+  .h1-petugas-dipanggil {
+    color: #555555;
+    text-align: end
+  }
+
+  .nomor-loket-dipanggil {
+    font-size: 150px;
+    text-align: center
+  }
+  .card2-6 {
+    min-height: 24vh;
+    border: 1px solid #7DBAF2
+  }
+  .col-card2-6 {
+    background-color: #7DBAF2;
+    border-radius: 5px 0 0 5px;
+    padding: 20px
+  }
+  .card-loket-card2-6 {
+    background-color: #E9DC7B
+  }
+  .h1-loket-card2-6 {
+    text-align: center;
+  }
+  .h1-nomor-card2-6 {
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 78px
+  }
+  .col2-card2-6 {
+    padding-top: 36px;
+  }
+  .card-waktu-card2-6 {
+    background-color: #DB8181;
+  }
+  .h3-waktu-card2-6 {
+    text-align: center;
+  }
+  .h2-dilayani-oleh-card2-6 {
+    color: #555555;
+    padding-left: 50px
+  }
+  .h2-petugas-oleh-card2-6 {
+    color: #555555;
+    text-align: end;
+    padding-right: 50px
   }
   
   /* Responsiveness */
@@ -48,6 +130,52 @@
       grid-template-columns: 1fr;
       padding: 10px;
     }
+
+    .h1-loket-dipanggil {
+      font-size: 40px;
+      text-align: center;
+    }
+
+    .h1-waktu-dipanggil {
+      font-size: 16px;
+      text-align: center
+    }
+
+    .h1-dilayani-oleh {
+      color: #555555;
+      font-size: 16px
+    }
+    .h1-petugas-dipanggil {
+      color: #555555;
+      font-size: 16px;
+      text-align: end
+    }
+    .nomor-loket-dipanggil {
+      font-size: 90px;
+      text-align: center
+    }
+    .col-loket-dipanggil-1 {
+      padding: 20px 20px 50px 20px;
+    }
+    .col2-card2-6 {
+      padding-top: 20px;
+    }
+    .h1-nomor-card2-6 {
+      font-size: 45px;
+      padding: 15px
+    }
+    .h1-loket-card2-6 {
+      text-align: center;
+      font-size: 16px;
+    }
+    .h2-dilayani-oleh-card2-6 {
+      padding-left: 25px;
+      font-size: 16px
+    }
+    .h2-petugas-oleh-card2-6 {
+      padding-right: 25px;
+      font-size: 16px
+    }
   }
 
   @media (max-width: 480px) {
@@ -63,6 +191,11 @@
     
     .more-cards {
       grid-template-columns: 1fr;
+    }
+
+    .h1-loket-dipanggil {
+      font-size: 26px;
+      text-align: center;
     }
   }
   
