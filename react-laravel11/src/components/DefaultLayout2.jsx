@@ -12,7 +12,7 @@ import { Layout, Menu, theme, Row, Col, Button, Dropdown, Skeleton, Flex } from 
 
 const { Header, Content, Footer, Sider } = Layout;
 
-const ProtectedMenuItem = ({ key, to, requiredAccess, icon, label, children }) => {
+const ProtectedMenuItem = ({ key, to, requiredAccess, icon, label, children, style }) => {
     const { user } = useStateContext();
 
     const hasAccess = !requiredAccess || (user && user.accesses && user.accesses.some(access => access.akses === requiredAccess));
@@ -26,6 +26,7 @@ const ProtectedMenuItem = ({ key, to, requiredAccess, icon, label, children }) =
         icon,
         label: to ? <Link to={to}>{label}</Link> : label,
         children,
+        style,
     };
 };
 
@@ -95,7 +96,10 @@ const DefaultLayout2 = () => {
             label: 'Dashboard',
             icon: <PieChartOutlined />,
             path: '/dashboard',
-            access: null
+            access: null,
+            style: {
+                height: '150px'
+            }
         },
         {
             key: '2',
@@ -132,6 +136,7 @@ const DefaultLayout2 = () => {
         requiredAccess: menu.access,
         icon: menu.icon,
         label: menu.label,
+        style: menu.style,
         children: menu.children ? menu.children.map(subMenu => ProtectedMenuItem({
             key: subMenu.key,
             to: subMenu.path,
