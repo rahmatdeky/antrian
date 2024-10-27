@@ -28,7 +28,7 @@ const LandingPageAntrian = () => {
     { id: 7, loket: 'Pengambilan Dokumen', nomor: 'P 001', waktuPanggil: '2024/10/22 08:07:00', petugas: 'Rahmat Deky'  },
     { id: 8, loket: 'Client Coordinator', nomor: 'C 001', waktuPanggil: '2024/10/22 08:08:00', petugas: 'Rahmat Deky'  },
     { id: 9, loket: 'Manifest', nomor: 'M 001', waktuPanggil: '2024/10/22 08:09:00', petugas: 'Rahmat Deky'  },
-    { id: 10, loket: 'Ekspor', nomor: 'E 001', waktuPanggil: '2024/10/22 08:09:10', petugas: 'Rahmat Deky'  },
+    { id: 10, loket: 'Client Coordinator', nomor: 'E 001', waktuPanggil: '2024/10/22 08:09:10', petugas: 'Rahmat Deky'  },
   ];
 
   const sortedDataAntrian = [...dataAntrian].sort((a, b) => {
@@ -45,15 +45,17 @@ const LandingPageAntrian = () => {
         {/* Card 1 & 3 tampil secara statis */}
         <Card className="card card1-3" style={{ gridArea: 'one-three'}} bodyStyle={{ padding: 0 }}>
           <Row justify='center'>
-            <Col className='col-loket-dipanggil-1' span={12}>
-              <Card className='card-loket-dipanggil' bordered={false}>
+            <Col className='col-loket-dipanggil-1' span={24}>
+              <Card className='card-loket-dipanggil' bordered={false} bodyStyle={{ padding: 10 }}>
                 <h1 className='h1-loket-dipanggil'> { card1And3[0].loket } </h1>
               </Card>
             </Col>
-            <Col className='col-loket-dipanggil' span={12}>
+          </Row>
+          <Row justify='center'>
+            <Col className='col-loket-dipanggil' span={24}>
               <Row>
                 <Col span={24}>
-                  <Card className="card-waktu-dipanggil" bordered={false}>
+                  <Card className="card-waktu-dipanggil" bordered={false} bodyStyle={{ padding: 0 }}>
                     <h1 className='h1-waktu-dipanggil'> { card1And3[0].waktuPanggil } </h1>
                   </Card>
                 </Col>

@@ -49,7 +49,7 @@
   }
 
   .h1-loket-dipanggil {
-    font-size: 96px;
+    font-size: 56px;
     text-align: center;
   }
 
@@ -84,7 +84,8 @@
     padding: 20px
   }
   .card-loket-card2-6 {
-    background-color: #E9DC7B
+    background-color: #E9DC7B;
+    min-height: 17vh;
   }
   .h1-loket-card2-6 {
     text-align: center;
