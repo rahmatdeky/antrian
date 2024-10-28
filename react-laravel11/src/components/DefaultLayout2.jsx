@@ -7,6 +7,10 @@ import {
     PieChartOutlined,
     TeamOutlined,
     UserOutlined,
+    NotificationOutlined,
+    SettingOutlined,
+    ApartmentOutlined,
+    AuditOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, theme, Row, Col, Button, Dropdown, Skeleton, Flex } from 'antd';
 
@@ -92,21 +96,65 @@ const DefaultLayout2 = () => {
 
     const menus = [
         {
+            key: '0',
+            label: '',
+            icon: '',
+            path: '',
+            access: null,
+            style: {
+                height: '60px', marginBottom: '30px'
+            }
+        },
+        {
             key: '1',
             label: 'Dashboard',
             icon: <PieChartOutlined />,
             path: '/dashboard',
             access: null,
-            style: {
-                height: '150px'
-            }
+            style: {}
         },
         {
             key: '2',
-            label: 'Users',
+            label: 'Pilih Loket',
             icon: <DesktopOutlined />,
             path: '/users',
             access: 'userManagement'
+        },
+        {
+            key: '3',
+            label: 'Antrian',
+            icon: <NotificationOutlined />,
+            path: '/users',
+            access: 'userManagement'
+        },
+        {
+            key: '4',
+            label: 'Setting',
+            icon: <SettingOutlined />,
+            access: 'userManagement',
+            children: [
+                {
+                    key: '4-1',
+                    label: 'Setting Layanan',
+                    icon: <ApartmentOutlined />,
+                    path: '/settings/layanan',
+                    access: 'userManagement'
+                },
+                {
+                    key: '4-2',
+                    label: 'Setting Loket',
+                    icon: <AuditOutlined />,
+                    path: '/settings/loket',
+                    access: 'userManagement'
+                },
+                {
+                    key: '4-3',
+                    label: 'Setting User',
+                    icon: <TeamOutlined />,
+                    path: '/settings/user',
+                    access: 'userManagement'
+                }
+            ]
         },
         {
             key: 'sub1',
@@ -115,13 +163,13 @@ const DefaultLayout2 = () => {
             access: 'userManagement',
             children: [
                 {
-                    key: '3',
+                    key: 'sub1-1',
                     label: 'Team 1',
                     path: '/team1',
                     access: 'userManagement'
                 },
                 {
-                    key: '4',
+                    key: 'sub1-2',
                     label: 'Team 2',
                     path: '/team2',
                     access: 'userManagement'
@@ -192,8 +240,8 @@ const DefaultLayout2 = () => {
                     >
                         <Skeleton active />
                     </Content>
-                    <Footer style={{ textAlign: 'center' }}>
-                        Ant Design ©{new Date().getFullYear()} Created by Ant UED
+                    <Footer style={{ textAlign: 'center', backgroundColor: '#D9D9D9', padding: '15px 50px' }}>
+                        &nbsp;
                     </Footer>
                 </Layout>
             </Layout>
@@ -243,7 +291,7 @@ const DefaultLayout2 = () => {
                     <div
                         style={{
                             padding: 24,
-                            minHeight: 360,
+                            minHeight: 500,
                             background: colorBgContainer,
                             borderRadius: borderRadiusLG,
                         }}
@@ -251,7 +299,7 @@ const DefaultLayout2 = () => {
                         <Outlet />
                     </div>
                 </Content>
-                <Footer style={{ textAlign: 'center' }}>
+                <Footer style={{ textAlign: 'center', backgroundColor: '#D9D9D9', padding: '15px 50px' }}>
                     Ant Design ©{new Date().getFullYear()} Created by Ant UED
                 </Footer>
             </Layout>
