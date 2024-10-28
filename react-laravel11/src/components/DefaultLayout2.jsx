@@ -97,12 +97,9 @@ const DefaultLayout2 = () => {
     const menus = [
         {
             key: '0',
-            label: '',
-            icon: '',
-            path: '',
             access: null,
             style: {
-                height: '60px', marginBottom: '30px'
+                height: '60px', marginBottom: '30px', backgroundColor: '#001529'
             }
         },
         {
