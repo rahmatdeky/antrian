@@ -13,6 +13,12 @@ import Team1 from './views/team1';
 import Team2 from './views/team2';
 import LandingPage from './views/LandingPage/LandingPage';
 import LandingPageAntrian from './views/LandingPage/Antrian/LandingPageAntrian';
+import Loket from './views/Loket/Loket';
+import Antrian from './views/Antrian/Antrian';
+import SettingLayanan from './views/Setting/Setting_Layanan/SettingLayanan';
+import SettingLoket from './views/Setting/Setting_Loket/SettingLoket';
+import SettingUser from './views/Setting/Setting_User/SettingUser';
+import DetailSettingUser from './views/Setting/Setting_User/DetailSettingUser';
 
 const router = createBrowserRouter([
     {
@@ -24,33 +30,52 @@ const router = createBrowserRouter([
                 element: <Navigate to="/dashboard" />,
             },
             {
-                path: "/users",
+                path: "/loket",
                 element: (
-                <ProtectedRoute requiredAccess="userManagement">
-                    <Users />
-                </ProtectedRoute>
-
-                ),
+                    <ProtectedRoute requiredAccess="Petugas Loket">
+                        <Loket />
+                    </ProtectedRoute>
+                )
             },
             {
-                path: "/users/new",
-                element: <UserForm key="userCreate" />,
+                path: "/antrian",
+                element: (
+                    <ProtectedRoute requiredAccess="Petugas Loket">
+                        <Antrian />
+                    </ProtectedRoute>
+                )
             },
             {
-                path: "/users/:id",
-                element: <UserForm key="userUpdate" />,
+                path: "/setting/layanan",
+                element: (
+                    <ProtectedRoute requiredAccess="Admin">
+                        <SettingLayanan />
+                    </ProtectedRoute>
+                )
             },
             {
-                path: "/dashboard",
-                element: <Dashboard />,
+                path: "/setting/loket",
+                element: (
+                    <ProtectedRoute requiredAccess="Admin">
+                        <SettingLoket />
+                    </ProtectedRoute>
+                )
             },
             {
-                path: "/team1",
-                element: <Team1 />,
+                path: "/setting/user",
+                element: (
+                    <ProtectedRoute requiredAccess="Admin">
+                        <SettingUser />
+                    </ProtectedRoute>
+                )
             },
             {
-                path: "/team2",
-                element: <Team2 />,
+                path: "/setting/user/:id",
+                element: (
+                    <ProtectedRoute requiredAccess="Admin">
+                        <DetailSettingUser />
+                    </ProtectedRoute>
+                )
             },
         ],
     },

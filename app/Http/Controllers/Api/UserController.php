@@ -8,6 +8,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use Hash;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -15,11 +16,15 @@ class UserController extends Controller
      * Display a listing of the resource.
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index()
+    public function index(Request $request)
     {
-        return UserResource::collection(
-            User::query()->orderBy('id', 'desc')->paginate(10)
-        );
+        $query = User::query();
+        if ($search = $request->query('search')) {
+            $query->where('name', 'like', "%{$search}%");
+            $query->orWhere('nip', 'like', "%{$search}%");
+        }
+        $users = $query->orderBy('name', 'asc')->get();
+        return UserResource::collection($users);
     }
 
     /**

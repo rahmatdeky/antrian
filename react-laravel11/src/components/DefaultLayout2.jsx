@@ -114,42 +114,42 @@ const DefaultLayout2 = () => {
             key: '2',
             label: 'Pilih Loket',
             icon: <DesktopOutlined />,
-            path: '/users',
-            access: 'userManagement'
+            path: '/loket',
+            access: 'Petugas Loket'
         },
         {
             key: '3',
             label: 'Antrian',
             icon: <NotificationOutlined />,
-            path: '/users',
-            access: 'userManagement'
+            path: '/antrian',
+            access: 'Petugas Loket'
         },
         {
             key: '4',
             label: 'Setting',
             icon: <SettingOutlined />,
-            access: 'userManagement',
+            access: 'Admin',
             children: [
                 {
                     key: '4-1',
                     label: 'Setting Layanan',
                     icon: <ApartmentOutlined />,
-                    path: '/settings/layanan',
-                    access: 'userManagement'
+                    path: '/setting/layanan',
+                    access: 'Admin'
                 },
                 {
                     key: '4-2',
                     label: 'Setting Loket',
                     icon: <AuditOutlined />,
-                    path: '/settings/loket',
-                    access: 'userManagement'
+                    path: '/setting/loket',
+                    access: 'Admin'
                 },
                 {
                     key: '4-3',
                     label: 'Setting User',
                     icon: <TeamOutlined />,
-                    path: '/settings/user',
-                    access: 'userManagement'
+                    path: '/setting/user',
+                    access: 'Admin'
                 }
             ]
         },
