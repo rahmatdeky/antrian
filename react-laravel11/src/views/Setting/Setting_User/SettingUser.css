@@ -1,0 +1,15 @@
+.data-detail-user {
+    font-size: 20px;
+}
+
+@media (max-width: 768px) {
+    .data-detail-user {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .data-detail-user {
+        font-size: 12px;
+    }
+}

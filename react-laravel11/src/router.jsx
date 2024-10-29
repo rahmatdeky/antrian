@@ -30,6 +30,10 @@ const router = createBrowserRouter([
                 element: <Navigate to="/dashboard" />,
             },
             {
+                path: "/dashboard",
+                element: <Dashboard />,
+            },
+            {
                 path: "/loket",
                 element: (
                     <ProtectedRoute requiredAccess="Petugas Loket">
