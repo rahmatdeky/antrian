@@ -74,7 +74,7 @@ const router = createBrowserRouter([
                 )
             },
             {
-                path: "/setting/user/:id",
+                path: "/setting/user/detail",
                 element: (
                     <ProtectedRoute requiredAccess="Admin">
                         <DetailSettingUser />

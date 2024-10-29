@@ -20,10 +20,9 @@ class UserController extends Controller
     {
         $query = User::query();
         if ($search = $request->query('search')) {
-            $query->where('name', 'like', "%{$search}%");
-            $query->orWhere('nip', 'like', "%{$search}%");
+            $query->orWhere('username', 'like', "%{$search}%");
         }
-        $users = $query->orderBy('name', 'asc')->get();
+        $users = $query->orderBy('email', 'asc')->get();
         return UserResource::collection($users);
     }
 

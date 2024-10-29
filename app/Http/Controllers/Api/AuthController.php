@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SignupRequest;
-use App\Models\User;
+use App\Models\Users;
+use App\Models\Role;
 use Hash;
 use Auth;
 
@@ -58,6 +59,44 @@ class AuthController extends Controller
     {
         $user = $request->user()->load('accesses');
         return response()->json($user);
+    }
+
+    public function getUser(Request $request)
+    {
+        $query = Users::with(['pegawai' => function ($q) {
+            $q->select('nip', 'nama', 'id_user');
+        }])
+        ->select('id');
+
+        if ($search = $request->query('search')) {
+            $query->Wherehas('pegawai', function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                ->orWhere('nip', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query->get();
+
+        return response()->json([
+            'data' => $users
+        ]);
+    }
+
+    public function detailUser($id)
+    {
+        $user = Users::with(['pegawai' => function ($q) {
+            $q->select('id', 'nip', 'nama', 'no_telp', 'pangkat', 'golongan', 'jabatan', 'bidang', 'id_user');
+        }])
+        ->select('id', 'username', 'email')
+        ->where('id', $id)
+        ->first();
+
+        $role = Role::where('id_user', $id)->get();
+
+        return response()->json([
+            'user' => $user,
+            'role' => $role
+        ]);
     }
 
 }

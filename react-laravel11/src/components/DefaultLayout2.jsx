@@ -19,7 +19,7 @@ const { Header, Content, Footer, Sider } = Layout;
 const ProtectedMenuItem = ({ key, to, requiredAccess, icon, label, children, style }) => {
     const { user } = useStateContext();
 
-    const hasAccess = !requiredAccess || (user && user.accesses && user.accesses.some(access => access.akses === requiredAccess));
+    const hasAccess = !requiredAccess || (user && user.accesses && user.accesses.some(access => access.role === requiredAccess));
 
     if (!hasAccess) {
         return null;
@@ -38,7 +38,7 @@ const DefaultLayout2 = () => {
     const { user, token, setUser, setToken } = useStateContext();
     const navigate = useNavigate();
     const location = useLocation();
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(true);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

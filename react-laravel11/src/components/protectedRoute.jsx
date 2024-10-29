@@ -4,7 +4,7 @@ import { useStateContext } from "../contexts/ContextProvider";
 
 const ProtectedRoute = ({ children, requiredAccess }) => {
     const { user } = useStateContext();
-    const hasAccess = user && user.accesses && user.accesses.some(access => access.akses === requiredAccess);
+    const hasAccess = user && user.accesses && user.accesses.some(access => access.role === requiredAccess);
 
     if (!hasAccess) {
         return <Navigate to="/403" />

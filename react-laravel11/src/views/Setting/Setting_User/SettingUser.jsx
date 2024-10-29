@@ -1,5 +1,5 @@
 import React from 'react'
-import { Divider, Flex, Button, Table, Input, Space } from 'antd';
+import { Divider, Flex, Button, Table, Input, Space, Row, Col, Modal } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import axiosClient from '../../../axios-client';
@@ -10,6 +10,7 @@ const SettingUser = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [dataUser, setDataUser] = useState([]);
+    const [modalTambahUser, setModalTambahUser] = useState(false);
     const navigate = useNavigate();
 
     const tabelUser = [
@@ -20,27 +21,27 @@ const SettingUser = () => {
         },
         {
             title: 'NIP',
-            dataIndex: 'nip',
-            key: 'nip',
+            dataIndex: ['pegawai', 'nip'],
+            key: 'pegawai.nip',
         },
         {
             title: 'Nama',
-            dataIndex: 'name',
-            key: 'name',
+            dataIndex: ['pegawai', 'nama'],
+            key: 'pegawai.nama',
         },
         {
             title: 'Aksi',
             key: 'aksi',
             width: '10%',
             render: (_, record) => (
-                <Button type="primary" icon={<SearchOutlined />} onClick={() => navigate(`/setting/user/${record.id}`)} ></Button>
+                <Button type="primary" icon={<SearchOutlined />} onClick={() => navigate('/setting/user/detail', { state: { userId: record.id } })} ></Button>
             )
         }
     ];
 
     const handleGetDataUser = (search = '') => {
         setIsLoading(true);
-        axiosClient.get('/users', {
+        axiosClient.get('/user/get', {
             params: { search },
         })
             .then(({ data }) => {
@@ -60,6 +61,10 @@ const SettingUser = () => {
         handleGetDataUser(value);
     }
 
+    const showModalTambahUser = () => {
+        setModalTambahUser(true);
+    }
+
     useEffect(() => {
         handleGetDataUser();
     }, []);
@@ -68,15 +73,24 @@ const SettingUser = () => {
         <>
             <h1>Setting User</h1>
             <Divider />
-            <Flex justify="space-between">
-            <Search style={{ width: 300 }} size='large' placeholder="Pencarian" onSearch={handleSearchDataUser} />
-            <Button size='large' type="primary">Tambah User</Button>
-            </Flex>
+            <Row>
+                <Col xs={24} md={12}>
+                    <Search className="search-user" size='large' placeholder="Pencarian" onSearch={handleSearchDataUser} />
+                </Col>
+                <Col xs={24} md={12}>
+                    <Button style={{ float: 'right' }} size='large' type="primary" onClick={showModalTambahUser}>Tambah User</Button>
+                </Col>
+            </Row>
             <Table 
             style={{ marginTop: 20 }} 
             columns={tabelUser} 
             loading={isLoading} 
             dataSource={dataUser} />
+            <Modal title="Tambah Pengguna" open={modalTambahUser} onCancel={() => setModalTambahUser(false)}>
+                <Divider />
+                <p>Some contents...</p>
+                <p>Some contents...</p>
+            </Modal>
         </>
     )
 }
