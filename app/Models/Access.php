@@ -10,10 +10,11 @@ class Access extends Model
 {
     use HasFactory;
 
+    protected $table = 'role';
     // Kolom yang dapat diisi (mass assignable)
     protected $fillable = [
         'id_user',
-        'akses',
+        'role',
     ];
 
     // Definisikan hubungan yang berlawanan dengan User
