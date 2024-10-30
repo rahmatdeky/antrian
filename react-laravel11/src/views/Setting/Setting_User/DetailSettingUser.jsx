@@ -1,15 +1,27 @@
 import React from 'react';
-import { Row, Col, Image, Card, Button, Table, Skeleton } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+import { Row, Col, Image, Card, Button, Table, Skeleton, Modal, Divider, Form, Select, message, Input } from 'antd';
+import { DeleteOutlined, SendOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import axiosClient from '../../../axios-client';
 import { useLocation } from 'react-router-dom';
 import './SettingUser.css';
 
+const { confirm } = Modal;
 const DetailSettingUser = () => {
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingRole, setIsLoadingRole] = useState(false);
+    const [isLoadingRefRole, setIsLoadingRefRole] = useState(false);
     const [dataRole, setDataRole] = useState([]);
     const [dataUser, setDataUser] = useState({});
+    const [refRole, setRefRole] = useState([]);
+    const [optionsBidang, setOptionsBidang] = useState([]);
+    const [modalTambahRole, setModalTambahRole] = useState(false);
+    const [modalEditUser, setModalEditUser] = useState(false);
+    const [modalGantiPassword, setModalGantiPassword] = useState(false);
+    const [formTambahRole] = Form.useForm();
+    const [formEditUser] = Form.useForm();
+    const [formGantiPassword] = Form.useForm();
+    const [messageApi, contextHolder] = message.useMessage();
     const location = useLocation();
     const userId = location.state?.userId;
 
@@ -22,23 +34,238 @@ const DetailSettingUser = () => {
             title: 'Aksi',
             width: '30%',
             render: (_, record) => (
-                <Button variant='outlined' color='danger' icon={<DeleteOutlined />} ></Button>
+                <Button variant='outlined' color='danger' icon={<DeleteOutlined />} onClick={() => confirmDeleteRole(record.id)} ></Button>
             )
         }
     ];
 
     const handleGetDataDetailUser = () => {
         setIsLoading(true);
+        setIsLoadingRole(true);
         axiosClient.get(`/user/detail/${userId}`)
             .then(({ data }) => {
                 setIsLoading(false);
+                setIsLoadingRole(false);
                 setDataUser(data.user);
                 setDataRole(data.role);
             })
             .catch(() => {
                 setIsLoading(false);
+                setIsLoadingRole(false);
             })
     }
+
+    const handleGetRefRole = () => {
+        setIsLoadingRefRole(true);
+        axiosClient.get('/referensi/role')
+            .then(({ data }) => {
+                setIsLoadingRefRole(false);
+                setRefRole(data);
+            })
+            .catch(() => {
+                setIsLoadingRefRole(false);
+            })
+    }
+
+    const handleGetDataBidang = () => {
+        axiosClient.get('/referensi/bidang')
+            .then(({ data }) => {
+                setOptionsBidang(data);
+            })
+            .catch(() => {
+            })
+    }
+
+    const showModalTambahRole = () => {
+        setModalTambahRole(true);
+        handleGetRefRole();
+    }
+
+    const handleCloseModalTambahRole = () => {
+        setModalTambahRole(false);
+        formTambahRole.resetFields();
+    }
+
+    const showModalEditUser = () => {
+        setModalEditUser(true);
+        handleGetDataBidang();
+    }
+
+    const handleCloseModalEditUser = () => {
+        setModalEditUser(false);
+        formEditUser.resetFields();
+    }
+
+    const showModalGantiPassword = () => {
+        setModalGantiPassword(true);
+    }
+
+    const handleCloseModalGantiPassword = () => {
+        setModalGantiPassword(false);
+        formGantiPassword.resetFields();
+    }
+
+    const handleSubmitTambahRole = (values) => {
+        setIsLoadingRole(true);
+        const payload = {
+            id_user: userId,
+            role: values.role,
+            nip: dataUser.pegawai.nip
+        }
+        axiosClient.post('/user/add/role', payload)
+            .then(({data})=> {
+                setIsLoadingRole(false);
+                messageApi.open({
+                    type: data.status,
+                    content: data.message,
+                })
+                handleGetDataDetailUser();
+                handleCloseModalTambahRole();
+            })
+            .catch(err => {
+                const response = err.response;
+                if (response) {
+                    setIsLoadingRole(false);
+                    messageApi.open({
+                        type: response.data.status,
+                        content: response.data.message,
+                    })
+                }
+            })
+    }
+
+    const confirmDeleteRole = (id) => {
+        confirm({
+            title: 'Konfirmasi',
+            content: 'Apakah anda yakin ingin menghapus role ini?',
+            onOk() {
+                handleDeleteRole(id);
+            },
+            onCancel() {
+                handleCloseModalTambahRole();
+            },
+        })
+    }
+
+    const handleDeleteRole = (id) => {
+        setIsLoadingRole(true);
+        axiosClient.delete(`/user/delete/role/${id}`)
+            .then(({ data }) => {
+                setIsLoadingRole(false);
+                messageApi.open({
+                    type: data.status,
+                    content: data.message,
+                })
+                handleGetDataDetailUser();
+            })
+            .catch(err => {
+                const response = err.response;
+                if (response) {
+                    setIsLoadingRole(false);
+                    messageApi.open({
+                        type: response.data.status,
+                        content: response.data.message,
+                    })
+                }
+            })
+    }
+
+    const confirmSubmitEditUser = (values) => {
+        confirm({
+            title: 'Konfirmasi',
+            content: 'Apakah anda yakin ingin mengubah data user ini?',
+            onOk() {
+                handleSubmitEditUser(values);
+            },
+            onCancel() {
+                handleCloseModalEditUser();
+            }
+        })
+    }
+
+    const handleSubmitEditUser = (values) => {
+        setIsLoading(true);
+        const payload = {
+            id_user: userId,
+            nama: values.nama,
+            golongan: values.golongan,
+            jabatan: values.jabatan,
+            bidang: values.bidang,
+            nomor_telepon: values.nomor_telepon,
+            email: values.email
+        }
+        axiosClient.post('/user/edit', payload)
+            .then(({ data }) => {
+                handleCloseModalEditUser();
+                handleGetDataDetailUser();
+                setIsLoading(false);
+                messageApi.open({
+                    type: data.status,
+                    content: data.message,
+                })
+            })
+            .catch(err => {
+                const response = err.response;
+                if (response) {
+                    setIsLoading(false);
+                    messageApi.open({
+                        type: response.data.status,
+                        content: response.data.message,
+                    })
+                }
+            })
+    }
+
+    const confirmSubmitGantiPassword = (values) => {
+        confirm({
+            title: 'Konfirmasi',
+            content: 'Apakah anda yakin ingin mengubah password user ini?',
+            onOk() {
+                handleSubmitGantiPassword(values);
+            },
+            onCancel() {
+                handleCloseModalGantiPassword();
+            }
+        })
+    }
+
+    const handleSubmitGantiPassword = (values) => {
+        setIsLoading(true);
+        const payload = {
+            id_user: userId,
+            password: values.password
+        }
+        axiosClient.post('/user/ganti/password', payload)
+            .then(({ data }) => {
+                handleCloseModalGantiPassword();
+                handleGetDataDetailUser();
+                setIsLoading(false);
+                messageApi.open({
+                    type: data.status,
+                    content: data.message,
+                })
+            })
+            .catch(err => {
+                const response = err.response;
+                if (response) {
+                    setIsLoading(false);
+                    messageApi.open({
+                        type: response.data.status,
+                        content: response.data.message,
+                    })
+                }
+            })
+    }
+
+    const selectRole = refRole.map((role) => ({
+        value: role.role,
+        label: role.role
+    }))
+
+    const selectOptionsBidang = optionsBidang.map((bidang) => ({
+        value: bidang.id,
+        label: bidang.bidang
+    }))
 
     useEffect(() => {
         if (userId) {
@@ -48,6 +275,7 @@ const DetailSettingUser = () => {
 
     return (
         <>
+            {contextHolder}
             <Row>
                 <Col xs={24} md={8} style={{ display: 'flex', justifyContent: 'center' }}>
                     {isLoading ? (
@@ -109,28 +337,227 @@ const DetailSettingUser = () => {
                     </Card>
                     <Row style={{ margin: "20px 0 " }} gutter={[16, 16]}>
                         <Col xs={24} sm={6} md={6} lg={4}>
-                            <Button color="default" variant="outlined" block size="large">
+                            <Button color="default" variant="outlined" block size="large" onClick={showModalTambahRole}>
                                 Tambah Role
                             </Button>
                         </Col>
                         <Col xs={24} sm={6} md={6} lg={4}>
-                            <Button color="primary" variant="solid" block size="large">
+                            <Button color="primary" variant="solid" block size="large" onClick={showModalEditUser}>
                                 Edit User
                             </Button>
                         </Col>
                         <Col xs={24} sm={6} md={6} lg={4}>
-                            <Button color="danger" variant="solid" block size="large">
+                            <Button color="danger" variant="solid" block size="large" onClick={showModalGantiPassword}>
                                 Ganti Password
                             </Button>
                         </Col>
                     </Row>
                     <Row>
                         <Col lg={12}>
-                            <Table rowKey="id" loading={isLoading} columns={tabelAkses} dataSource={dataRole} pagination={false} scroll={{ y: 300 }} />
+                            <Table rowKey="id" loading={isLoadingRole} columns={tabelAkses} dataSource={dataRole} pagination={false} scroll={{ y: 300 }} />
                         </Col>
                     </Row>
                 </Col>
             </Row>
+            <Modal
+            title="Tambah Role"
+            open={modalTambahRole}
+            onCancel={handleCloseModalTambahRole}
+            footer={[
+                <Button type="default" key="cancel" onClick={handleCloseModalTambahRole}>
+                    Batal
+                </Button>,
+                <Button type="primary" icon={<SendOutlined />} key="submit" onClick={() => formTambahRole.submit()}>
+                    Simpan
+                </Button>
+            ]}>
+                <Divider />
+                <Form
+                    form={formTambahRole}
+                    labelCol = {{ span: 4 }}
+                    labelWrap
+                    labelAlign='left'
+                    colon={false}
+                    onFinish={handleSubmitTambahRole}
+                >
+                    <Form.Item
+                    label="Role"
+                    name="role"
+                    rules={[
+                        {
+                        required: true,
+                        message: 'Pilih Role'
+                        }
+                    ]}
+                    >
+                        <Select options={selectRole} loading={isLoadingRefRole} />
+                    </Form.Item>
+                </Form>
+            </Modal>
+            <Modal
+                title="Edit User"
+                open={modalEditUser}
+                onCancel={handleCloseModalEditUser}
+                footer={[
+                    <Button type='default' key='cancel' onClick={handleCloseModalEditUser}>Batal</Button>,
+                    <Button type='primary' key='submit' onClick={() => formEditUser.submit()} icon={<SendOutlined />}>Simpan</Button>
+                ]}
+            >
+                <Divider />
+                <Form
+                    form={formEditUser}
+                    labelCol={{ span: 4 }}
+                    labelWrap
+                    labelAlign='left'
+                    colon={false}
+                    onFinish={confirmSubmitEditUser}
+                    initialValues={{
+                        nama: dataUser.pegawai?.nama,
+                        golongan: dataUser.pegawai?.golongan,
+                        jabatan: dataUser.pegawai?.jabatan,
+                        bidang: dataUser.pegawai?.id_bidang,
+                        no_telp: dataUser.pegawai?.no_telp,
+                        email: dataUser.pegawai?.email
+                    }}
+                >
+                    <Form.Item
+                        label="Nama"
+                        name="nama"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Masukan Nama'
+                            }
+                        ]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        label="Golongan"
+                        name="golongan"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Masukan Golongan'
+                            }
+                        ]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        label="Jabatan"
+                        name="jabatan"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Masukan Jabatan'
+                            }
+                        ]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        label="Bidang / Bagian"
+                        name="bidang"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Masukan Bidang / Bagian'
+                            }
+                        ]}
+                    >
+                        <Select options={selectOptionsBidang} />
+                    </Form.Item>
+                    <Form.Item
+                        label="Nomor Telepon"
+                        name="no_telp"
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        label="Email"
+                        name="email"
+                        rules={[
+                            {
+                                type: 'email',
+                                message: 'Email yang dimasukkan tidak valid!'
+                            }
+                        ]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item style={{ display: 'none' }}>
+                        <Button htmlType='submit'></Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
+            <Modal
+            title="Ganti Password"
+            open={modalGantiPassword}
+            onCancel={handleCloseModalGantiPassword}
+            footer={[
+                <Button type="default" key="cancel" onClick={handleCloseModalGantiPassword}>
+                    Batal
+                </Button>,
+                <Button type="primary" icon={<SendOutlined />} key="submit" onClick={() => formGantiPassword.submit()}>
+                    Simpan
+                </Button>
+            ]}
+            >
+                <Divider />
+                <Form
+                    form={formGantiPassword}
+                    labelCol = {{ span: 4 }}
+                    labelWrap
+                    labelAlign='left'
+                    colon={false}
+                    onFinish={confirmSubmitGantiPassword}
+                >
+                    <Form.Item
+                        label="Password"
+                        name="password"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Masukan Password'
+                            },
+                            {
+                                min: 8,
+                                message: 'Password minimal 8 karakter',
+                            },
+                            {
+                                pattern: /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W])/,
+                                message: 'Password harus mengandung huruf besar, huruf kecil, angka, dan simbol',
+                            },
+                        ]}
+                    >
+                        <Input.Password />
+                    </Form.Item>
+                    <Form.Item
+                        label="Konfirmasi Password"
+                        name="password_confirmation"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Masukan Konfirmasi Password'
+                            },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                if (!value || getFieldValue('password') === value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('Password yang anda masukkan tidak cocok!'));
+                                },
+                            }),
+                        ]}
+                    >
+                        <Input.Password />
+                    </Form.Item>
+                    <Form.Item style={{ display: 'none' }}>
+                        <Button htmlType='submit'></Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
         </>
     )
 }

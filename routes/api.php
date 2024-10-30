@@ -18,9 +18,14 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/user/get', [AuthController::class, 'getUser']);
     Route::get('/user/detail/{id}', [AuthController::class, 'detailUser']);
     Route::post('/user/add', [AuthController::class, 'addUser']);
+    Route::post('/user/add/role', [AuthController::class, 'addRole']);
+    Route::delete('/user/delete/role/{id}', [AuthController::class, 'deleteRole']);
+    Route::post('/user/edit', [AuthController::class, 'editUser']);
+    Route::post('/user/ganti/password', [AuthController::class, 'gantiPassword']);
 
     // Referensi
     Route::get('/referensi/bidang', [ReferensiController::class, 'bidang']);
+    Route::get('/referensi/role', [ReferensiController::class, 'refRole']);
 });
 
 // Auth

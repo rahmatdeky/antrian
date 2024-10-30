@@ -194,4 +194,148 @@ class AuthController extends Controller
         }
     }
 
+    public function addRole(Request $request)
+    {
+        $role = Role::where('id_user', $request->id_user)
+            ->where('role', $request->role)
+            ->first();
+
+        if ($role) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User telah memiliki role ini',
+            ], 422);
+        }
+
+        try {
+            $addRole = Role::create([
+                'id_user' => $request->id_user,
+                'role' => $request->role,
+                'nip' => $request->nip
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Role berhasil ditambahkan',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menambahkan Role',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+
+    }
+
+    public function deleteRole($id)
+    {
+        $role = Role::where('id', $id)->first();
+
+        if (!$role) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Role tidak ditemukan',
+            ], 404);
+        }
+
+        try {
+            $role->delete();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Role berhasil dihapus',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghapus Role',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function editUser(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_user' => 'required|exists:users,id',
+            'nama' => 'required|string|max:255',
+            'golongan' => 'required|string|max:255',
+            'jabatan' => 'required|string|max:255',
+            'bidang' => 'required|exists:bidang,id',
+            'nomor_telepon' => 'nullable|string|max:15',
+            'email' => 'nullable|email|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        try {
+            $pegawai = Pegawai::where('id_user', $request->id_user)
+                ->update([
+                    'nama' => strtoupper($request->nama),
+                    'golongan' => $request->golongan,
+                    'jabatan' => $request->jabatan,
+                    'id_bidang' => $request->bidang,
+                    'no_telp' => $request->nomor_telepon,
+                    'email' => $request->email
+                ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Pegawai berhasil diedit',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengedit Pegawai',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function gantiPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_user' => 'required|exists:users,id',
+            'password' => [
+                'required',
+                'string',
+                'min:8', // Minimum 8 karakter
+                'regex:/[a-z]/', // Harus ada huruf kecil
+                'regex:/[A-Z]/', // Harus ada huruf besar
+                'regex:/[0-9]/', // Harus ada angka
+                'regex:/[\W]/', // Harus ada karakter spesial
+            ],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        try {
+            $user = Users::where('id', $request->id_user)
+                ->update([
+                    'password' => Hash::make($request->password),
+                ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Password berhasil diganti',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengganti Password',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
