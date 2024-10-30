@@ -11,5 +11,15 @@ class Pegawai extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
     public $timestamps = false;
-    protected $fillable = ['id', 'nip', 'nama', 'no_telp', 'pangkat', 'golongan', 'jabatan', 'bidang', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'id_user', 'nip', 'nama', 'no_telp', 'email', 'golongan', 'jabatan', 'id_bidang'];
+
+    public function bidang()
+    {
+        return $this->belongsTo(Bidang::class, 'id_bidang', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(Users::class, 'id_user', 'id');
+    }
 }

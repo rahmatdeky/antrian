@@ -11,7 +11,7 @@ class Users extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
     public $timestamps = false;
-    protected $fillable = ['id', 'email', 'username', 'email_verified_at', 'password', 'remember_token', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'username', 'password', 'remember_token'];
 
     public function pegawai()
     {

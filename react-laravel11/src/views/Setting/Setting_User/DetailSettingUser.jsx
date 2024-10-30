@@ -88,12 +88,17 @@ const DetailSettingUser = () => {
                             <Row>
                                 <Col xs={9} md={6} className='data-detail-user'>Bidang / Bagian</Col>
                                 <Col xs={2} md={1} className='data-detail-user'>:</Col>
-                                <Col xs={24} md={17} className='data-detail-user'> {dataUser.pegawai?.bidang} </Col>
+                                <Col xs={24} md={17} className='data-detail-user'> {dataUser.pegawai?.bidang?.bidang} </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={9} md={6} className='data-detail-user'>Nomor Telepon</Col>
+                                <Col xs={2} md={1} className='data-detail-user'>:</Col>
+                                <Col xs={24} md={17} className='data-detail-user'> {dataUser.pegawai?.no_telp} </Col>
                             </Row>
                             <Row>
                                 <Col xs={9} md={6} className='data-detail-user'>Email</Col>
                                 <Col xs={2} md={1} className='data-detail-user'>:</Col>
-                                <Col xs={24} md={17} className='data-detail-user'> {dataUser.email} </Col>
+                                <Col xs={24} md={17} className='data-detail-user'> {dataUser.pegawai?.email} </Col>
                             </Row>
                             <Row>
                                 <Col xs={9} md={6} className='data-detail-user'>Username</Col>

@@ -4,11 +4,15 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SignupRequest;
 use App\Models\Users;
 use App\Models\Role;
-use Hash;
+use App\Models\Pegawai;
 use Auth;
 
 class AuthController extends Controller
@@ -85,9 +89,10 @@ class AuthController extends Controller
     public function detailUser($id)
     {
         $user = Users::with(['pegawai' => function ($q) {
-            $q->select('id', 'nip', 'nama', 'no_telp', 'pangkat', 'golongan', 'jabatan', 'bidang', 'id_user');
+            $q->select('id', 'nip', 'nama', 'no_telp', 'golongan', 'jabatan', 'id_bidang', 'id_user', 'email')
+            ->with('bidang');
         }])
-        ->select('id', 'username', 'email')
+        ->select('id', 'username')
         ->where('id', $id)
         ->first();
 
@@ -97,6 +102,96 @@ class AuthController extends Controller
             'user' => $user,
             'role' => $role
         ]);
+    }
+
+    public function addUser(Request $request)
+    {
+        DB::beginTransaction();
+
+        $username = Users::select('username')->where('username', $request->username)->first();
+        
+        if ($username) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Username sudah terdaftar',
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'nip' => 'required|string|max:18',
+            'nama' => 'required|string|max:255',
+            'golongan' => 'required|string|max:255',
+            'jabatan' => 'required|string|max:255',
+            'bidang' => 'required|exists:bidang,id', // Pastikan id bidang valid
+            'nomor_telepon' => 'nullable|string|max:15', // Tidak wajib diisi
+            'email' => 'nullable|email|max:255', // Tidak wajib diisi
+            'username' => 'required|string|max:255|unique:users,username',
+            'password' => [
+                'required',
+                'string',
+                'min:8', // Minimum 8 karakter
+                'regex:/[a-z]/', // Harus ada huruf kecil
+                'regex:/[A-Z]/', // Harus ada huruf besar
+                'regex:/[0-9]/', // Harus ada angka
+                'regex:/[\W]/', // Harus ada karakter spesial
+            ],
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        try {
+            $nomorTelepon = '+62' . ltrim($request->nomor_telepon, '0');
+            // insert ke tabel user
+            $user = Users::create([
+                'username' => $request->username,
+                'password' => Hash::make($request->password),
+                'remember_token' => Str::random(25)
+            ]);
+            
+            $userId = Users::select('id')->where('username', $request->username)->first();
+
+            $nip = Pegawai::select('nip')->where('nip', $request->nip)->first();
+
+            if ($nip) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'NIP sudah terdaftar',
+                ], 422);
+            }
+
+            $pegawai = Pegawai::create([
+                'id_user' => $userId->id,
+                'nip' => $request->nip,
+                'nama' => strtoupper($request->nama),
+                'no_telp' => $nomorTelepon,
+                'email' => $request->email,
+                'golongan' => $request->golongan,
+                'jabatan' => $request->jabatan,
+                'id_bidang' => $request->bidang
+            ]);
+            // insert ke tabel pegawai
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'User dan Pegawai berhasil ditambahkan',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menambahkan User dan Pegawai',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
 }
