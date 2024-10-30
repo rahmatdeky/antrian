@@ -11,6 +11,7 @@ import {
     SettingOutlined,
     ApartmentOutlined,
     AuditOutlined,
+    HistoryOutlined
 } from '@ant-design/icons';
 import { Layout, Menu, theme, Row, Col, Button, Dropdown, Skeleton, Flex } from 'antd';
 
@@ -152,6 +153,12 @@ const DefaultLayout2 = () => {
                     access: 'Admin'
                 }
             ]
+        },
+        {
+            key: '5',
+            label: 'Riwayat Antrian',
+            icon: <HistoryOutlined />,
+            path: '/riwayat'
         },
         {
             key: 'sub1',

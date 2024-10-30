@@ -19,6 +19,7 @@ import SettingLayanan from './views/Setting/Setting_Layanan/SettingLayanan';
 import SettingLoket from './views/Setting/Setting_Loket/SettingLoket';
 import SettingUser from './views/Setting/Setting_User/SettingUser';
 import DetailSettingUser from './views/Setting/Setting_User/DetailSettingUser';
+import RiwayatAntrian from './views/RiwayatAntrian/RiwayatAntrian';
 
 const router = createBrowserRouter([
     {
@@ -80,6 +81,10 @@ const router = createBrowserRouter([
                         <DetailSettingUser />
                     </ProtectedRoute>
                 )
+            },
+            {
+                path: "/riwayat",
+                element: <RiwayatAntrian />,
             },
         ],
     },
