@@ -154,7 +154,9 @@ const SettingUser = () => {
             style={{ marginTop: 20 }} 
             columns={tabelUser} 
             loading={isLoading} 
-            dataSource={dataUser} />
+            dataSource={dataUser}
+            scroll={{ x: 'max-content' }}
+            />
             <Modal title="Tambah Pengguna"
             open={modalTambahUser}
             onCancel={closeModalTambahUser}
