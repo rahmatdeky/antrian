@@ -11,7 +11,7 @@ const SettingUser = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingRefBidang, setIsLoadingRefBidang] = useState(false);
-    const [isLoadingAll, setIsLoadingAll] = useState(false);
+    const [isLoadingTambahUser, setIsLoadingTambahUser] = useState(false);
     const [dataUser, setDataUser] = useState([]);
     const [modalTambahUser, setModalTambahUser] = useState(false);
     const [optionsBidang, setOptionsBidang] = useState([]);
@@ -54,7 +54,6 @@ const SettingUser = () => {
                 handleSubmitTambahUser(values);
             },
             onCancel() {
-                closeModalTambahUser();
             },
         })
     }
@@ -90,10 +89,10 @@ const SettingUser = () => {
     }
 
     const handleSubmitTambahUser = (values) => {
-        setIsLoadingAll(true);
+        setIsLoadingTambahUser(true);
         axiosClient.post('/user/add', values)
             .then(({ data }) => {
-                setIsLoadingAll(false);
+                setIsLoadingTambahUser(false);
                 messageApi.open({
                     type: data.status,
                     content: data.message,
@@ -104,7 +103,7 @@ const SettingUser = () => {
             .catch(err => {
                 const response = err.response;
                 if (response && response.status === 422) {
-                    setIsLoadingAll(false);
+                    setIsLoadingTambahUser(false);
                     messageApi.open({
                         type: response.data.status,
                         content: response.data.message,
@@ -138,7 +137,6 @@ const SettingUser = () => {
 
     return (
         <>
-            <Spin spinning={isLoadingAll}>
             {contextHolder}
             <h1>Setting User</h1>
             <Divider />
@@ -164,7 +162,7 @@ const SettingUser = () => {
                 <Button type="default" key="cancel" onClick={closeModalTambahUser}>
                     Batal
                 </Button>,
-                <Button type="primary" icon={<SendOutlined />} key="submit" onClick={() => form.submit()}>
+                <Button loading={isLoadingTambahUser} type="primary" icon={<SendOutlined />} key="submit" onClick={() => form.submit()}>
                     Simpan
                 </Button>,
             ]}>
@@ -284,7 +282,6 @@ const SettingUser = () => {
                     </Form.Item>
                 </Form>
             </Modal>
-            </Spin>
         </>
     )
 }

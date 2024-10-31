@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\ReferensiController;
+use App\Http\Controllers\Antrian\LayananController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -22,6 +23,14 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::delete('/user/delete/role/{id}', [AuthController::class, 'deleteRole']);
     Route::post('/user/edit', [AuthController::class, 'editUser']);
     Route::post('/user/ganti/password', [AuthController::class, 'gantiPassword']);
+
+    // Setting Layanan
+    Route::get('/layanan', [LayananController::class, 'getLayanan']);
+    Route::post('/layanan/add', [LayananController::class, 'addLayanan']);
+    Route::put('/layanan/edit', [LayananController::class, 'editLayanan']);
+    Route::post('/layanan/jenis/add', [LayananController::class, 'addJenisLayanan']);
+    Route::get('/layanan/jenis/{id}', [LayananController::class, 'getJenisLayanan']);
+    Route::delete('/layanan/delete/{id}', [LayananController::class, 'deleteLayanan']);
 
     // Referensi
     Route::get('/referensi/bidang', [ReferensiController::class, 'bidang']);

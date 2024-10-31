@@ -142,7 +142,6 @@ const DetailSettingUser = () => {
                 handleDeleteRole(id);
             },
             onCancel() {
-                handleCloseModalTambahRole();
             },
         })
     }
@@ -178,7 +177,6 @@ const DetailSettingUser = () => {
                 handleSubmitEditUser(values);
             },
             onCancel() {
-                handleCloseModalEditUser();
             }
         })
     }
@@ -224,7 +222,6 @@ const DetailSettingUser = () => {
                 handleSubmitGantiPassword(values);
             },
             onCancel() {
-                handleCloseModalGantiPassword();
             }
         })
     }
