@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('loket', function (Blueprint $table) {
             $table->id();
             $table->string('nama_loket');
-            $table->unsignedBigInteger('id_keranjang');
+            $table->unsignedBigInteger('id_layanan');
         });
     }
 

@@ -3,6 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Role;
+use App\Models\Bidang;
+use App\Models\RefRole;
+use App\Models\Pegawai;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -19,6 +23,41 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'username' => 'test',
             'password' => Hash::make('password'),
+        ]);
+
+        $bidangUmum = Bidang::create([
+            'bidang' => 'Umum',
+            'kode_bidang' => 1,
+        ]);
+
+        $bidangKi = Bidang::create([
+            'bidang' => 'Kepatuhan Internal',
+            'kode_bidang' => 2,
+        ]);
+
+        $refRoleAdmin = RefRole::create([
+            'role' => 'Admin',
+        ]);
+
+        $refRoleLoket = RefRole::create([
+            'role' => 'Petugas Loket',
+        ]);
+
+        Role::create([
+            'role' => 'Admin',
+            'nip' => '123456789',
+            'id_user' => 1
+        ]);
+
+        Pegawai::create([
+            'id_user' => 1,
+            'nip' => '123456789',
+            'nama' => 'Admin',
+            'no_telp' => '08123456789',
+            'email' => 'TQ5ZQ@example.com',
+            'golongan' => 'Admin',
+            'jabatan' => 'Admin',
+            'id_bidang' => 1
         ]);
     }
 }

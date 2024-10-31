@@ -34,7 +34,7 @@ const DetailSettingUser = () => {
             title: 'Aksi',
             width: '30%',
             render: (_, record) => (
-                <Button variant='outlined' color='danger' icon={<DeleteOutlined />} onClick={() => confirmDeleteRole(record.id)} ></Button>
+                <Button variant="outlined" color="danger" icon={<DeleteOutlined />} onClick={() => confirmDeleteRole(record.id)} ></Button>
             )
         }
     ];

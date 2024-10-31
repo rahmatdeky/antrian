@@ -16,11 +16,11 @@ return new class extends Migration
             $table->unsignedBigInteger('id_user');
             $table->string('nip');
             $table->string('nama');
-            $table->string('no_telp');
-            $table->string('email');
+            $table->string('no_telp')->nullable();
+            $table->string('email')->nullable();
             $table->string('golongan');
             $table->string('jabatan');
-            $table->string('bidang');
+            $table->string('id_bidang');
         });
     }
 
