@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Layanan;
 use App\Models\JenisLayanan;
+use App\Models\Loket;
 
 class LayananController extends Controller
 {
@@ -110,6 +111,15 @@ class LayananController extends Controller
 
     public function deleteLayanan($id)
     {
+        $loket = Loket::select('nama_loket')->where('id_layanan', $id)->get();
+        if ($loket->isNotEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Tidak dapat menghapus layanan, karena masih terkait dengan beberapa loket. hapus loket terlebih dahulu',
+                'data' => $loket
+            ], 400);
+        }
+
         try {
             $layanan = Layanan::where('id', $id)->delete();
             $jenisLayanan = JenisLayanan::where('id_layanan', $id)->delete();

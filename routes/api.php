@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\ReferensiController;
 use App\Http\Controllers\Antrian\LayananController;
+use App\Http\Controllers\Antrian\LoketController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -31,6 +32,12 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('/layanan/jenis/add', [LayananController::class, 'addJenisLayanan']);
     Route::get('/layanan/jenis/{id}', [LayananController::class, 'getJenisLayanan']);
     Route::delete('/layanan/delete/{id}', [LayananController::class, 'deleteLayanan']);
+
+    // Setting Loket
+    Route::get('/loket', [LoketController::class, 'getLoket']);
+    Route::post('/loket/add', [LoketController::class, 'addLoket']);
+    Route::delete('/loket/delete/{id}', [LoketController::class, 'deleteLoket']);
+    Route::put('/loket/edit', [LoketController::class, 'editLoket']);
 
     // Referensi
     Route::get('/referensi/bidang', [ReferensiController::class, 'bidang']);

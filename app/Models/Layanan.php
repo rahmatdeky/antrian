@@ -15,6 +15,11 @@ class Layanan extends Model
 
     public function jenis_layanan()
     {
-        return $this->belongsTo(JenisLayanan::class, 'id_layanan', 'id');
+        return $this->hasMany(JenisLayanan::class, 'id_layanan', 'id');
+    }
+
+    public function loket()
+    {
+        return $this->hasMany(Loket::class, 'id_layanan', 'id');
     }
 }
