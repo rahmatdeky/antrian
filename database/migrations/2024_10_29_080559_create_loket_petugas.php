@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('loket_petugas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_loket');
-            $table->date('tanggal');
-            $table->string('nip');
-            $table->unsignedBigInteger('id_user');
+            $table->unsignedBigInteger('id_loket')->nullable();
+            $table->date('tanggal')->nullable();
+            $table->string('nip')->nullable();
+            $table->unsignedBigInteger('id_user')->nullable();
             $table->timestamp('waktu_checkin')->nullable();
             $table->timestamp('waktu_checkout')->nullable();
         });

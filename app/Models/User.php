@@ -54,4 +54,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Access::class, 'id_user');
     }
+
+    public function pegawai()
+    {
+        return $this->hasOne(Pegawai::class, 'id_user', 'id');
+    }
 }

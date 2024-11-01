@@ -39,6 +39,10 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::delete('/loket/delete/{id}', [LoketController::class, 'deleteLoket']);
     Route::put('/loket/edit', [LoketController::class, 'editLoket']);
 
+    // Pilih Loket
+    Route::get('/loket/pilih', [LoketController::class, 'dataPilihLoket']);
+    Route::get('/loket/pilih/{id}', [LoketController::class, 'pilihLoket']);
+
     // Referensi
     Route::get('/referensi/bidang', [ReferensiController::class, 'bidang']);
     Route::get('/referensi/role', [ReferensiController::class, 'refRole']);

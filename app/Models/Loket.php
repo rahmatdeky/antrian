@@ -17,4 +17,9 @@ class Loket extends Model
     {
         return $this->belongsTo(Layanan::class, 'id_layanan', 'id');
     }
+
+    public function loketPetugas()
+    {
+        return $this->hasMany(LoketPetugas::class, 'id_loket', 'id');
+    }
 }
