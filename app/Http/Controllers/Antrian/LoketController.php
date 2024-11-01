@@ -84,10 +84,12 @@ class LoketController extends Controller
 
     public function dataPilihLoket()
     {
+        date_default_timezone_set('Asia/Jakarta');
+
         $today = Carbon::today();
         $user = Auth::user();
         $dataLoket = Loket::with(['loketPetugas' => function($query) use ($today) {
-            $query->where('tanggal', $today)->whereNull('waktu_checkout');
+            $query->whereDate('tanggal', $today)->whereNull('waktu_checkout');
         }, 'loketPetugas.user.pegawai'])->get();
 
         $result = $dataLoket->map(function ($loket) use ($user) {
@@ -181,6 +183,7 @@ class LoketController extends Controller
 
     public function checkoutLoket($id)
     {
+        date_default_timezone_set('Asia/Jakarta');
 
         try {
             LoketPetugas::where('id', $id)
@@ -207,6 +210,8 @@ class LoketController extends Controller
 
     public function antrianLoketCheck()
     {
+        date_default_timezone_set('Asia/Jakarta');
+
         $user = Auth::user();
         $tanggal = Carbon::today();
         

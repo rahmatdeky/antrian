@@ -65,6 +65,8 @@ class AntrianController extends Controller
 
     public function getAntrianByLayanan($id)
     {
+        date_default_timezone_set('Asia/Jakarta');
+
         $tanggal = Carbon::today();
 
         try {
