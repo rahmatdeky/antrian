@@ -4,6 +4,7 @@ import { CheckOutlined, LogoutOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
 import axiosClient from '../../axios-client'
 import moment from 'moment'
+import Pusher from 'pusher-js'
 
 const { confirm } = Modal
 const Loket = () => {
@@ -58,7 +59,7 @@ const Loket = () => {
                 <Button
                     type="primary"
                     icon={<LogoutOutlined />}
-                    onClick={() => handleCheckoutLoket(record.id)}
+                    onClick={() => confirmCheckoutLoket(record.loket_petugas[0].id)}
                 />
             ) : (
                 <Button
@@ -80,6 +81,18 @@ const Loket = () => {
       content: 'Apakah anda yakin ingin memilih loket ini?',
       onOk() {
         handlePilihLoket(id);
+      },
+      onCancel() {
+      }
+    })
+  }
+
+  const confirmCheckoutLoket = (id) => {
+    confirm({
+      title: 'Konfirmasi',
+      content: 'Apakah anda yakin ingin checkout loket ini?',
+      onOk() {
+        handleCheckoutLoket(id);
       },
       onCancel() {
       }
@@ -134,8 +147,57 @@ const Loket = () => {
     })
   }
 
+  const handleCheckoutLoket= (id) => {
+    setIsLoading(true);
+    axiosClient.get(`/loket/checkout/${id}`)
+    .then(({ data }) => {
+      setIsLoading(false);
+      messageApi.open({
+        type: data.status,
+        content: data.message,
+      })
+      handleGetDataLoket();
+    })
+    .catch( err => {
+      const response = err.response;
+      if (response) {
+        setIsLoading(false);
+        messageApi.open({
+          type: response.data.status,
+          content: response.data.message,
+        })
+      }
+    })
+  }
+
   useEffect(() => {
     handleGetDataLoket();
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    // Initialize Pusher
+    const pusher = new Pusher('3noeceoo4vqaomp92yg0', {
+        cluster: 'ap1',
+        enabledTransports: ['ws'],    // Menggunakan WebSocket sebagai transport
+        forceTLS: false,              // Menonaktifkan TLS
+        wsHost: '127.0.0.1',          // WebSocket host lokal
+        wsPort: 8080 
+    });
+
+    // Subscribe to the channel
+    const channel = pusher.subscribe('loket-channel');
+
+    // Bind the event and alert the data when received
+    channel.bind('pilih-loket-event', function(data) {
+        // alert(JSON.stringify(data));
+        handleGetDataLoket();
+    });
+
+    // Cleanup function to unsubscribe from channel when component unmounts
+    return () => {
+        channel.unbind_all();
+        channel.unsubscribe();
+    };
   }, [])
 
   return (

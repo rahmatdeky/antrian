@@ -42,6 +42,7 @@ Route::middleware('auth:sanctum')->group(function() {
     // Pilih Loket
     Route::get('/loket/pilih', [LoketController::class, 'dataPilihLoket']);
     Route::get('/loket/pilih/{id}', [LoketController::class, 'pilihLoket']);
+    Route::get('/loket/checkout/{id}', [LoketController::class, 'checkoutLoket']);
 
     // Referensi
     Route::get('/referensi/bidang', [ReferensiController::class, 'bidang']);
