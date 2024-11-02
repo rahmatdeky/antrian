@@ -49,6 +49,23 @@ class LayananController extends Controller
         }
     }
 
+    public function getLayananGuest()
+    {
+        try {
+            $layanan = Layanan::with('jenis_layanan')->get();
+            return response()->json([
+                'status' => 'success',
+                'data' => $layanan
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengambil data Layanan',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function editLayanan(Request $request)
     {
         try {

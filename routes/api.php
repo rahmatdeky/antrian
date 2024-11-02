@@ -55,3 +55,6 @@ Route::middleware('auth:sanctum')->group(function() {
 // Auth
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// Landing Page
+Route::get('/layanan/guest', [LayananController::class, 'getLayananGuest']);

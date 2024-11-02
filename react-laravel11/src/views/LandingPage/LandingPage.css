@@ -232,6 +232,7 @@ body {
   .informasi-card {
     min-width: 240px; /* Lebar yang lebih kecil untuk tampilan mobile */
     max-width: 100%; /* Agar card tetap berada di tengah */
+    font-size: 18px;
   }
 
   .button-login {
@@ -308,6 +309,7 @@ body {
   .informasi-card {
     min-width: 240px; /* Lebar yang lebih kecil untuk tampilan mobile */
     max-width: 100%; /* Agar card tetap berada di tengah */
+    font-size: 18px;
   }
 
   .button-login {
