@@ -20,7 +20,8 @@ return new class extends Migration
             $table->timestamp('waktu_selesai')->nullable();
             $table->unsignedBigInteger('id_layanan');
             $table->unsignedBigInteger('id_loket')->nullable();
-            $table->string('nip');
+            $table->string('nip')->nullable();
+            $table->date('tanggal')->nullable();
         });
     }
 

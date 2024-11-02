@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\ReferensiController;
 use App\Http\Controllers\Antrian\LayananController;
 use App\Http\Controllers\Antrian\LoketController;
+use App\Http\Controllers\Antrian\AntrianController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -58,3 +59,4 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Landing Page
 Route::get('/layanan/guest', [LayananController::class, 'getLayananGuest']);
+Route::get('/layanan/guest/ambil/{id}', [AntrianController::class, 'ambilAntrian']);
