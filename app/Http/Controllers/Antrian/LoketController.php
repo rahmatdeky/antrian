@@ -205,5 +205,32 @@ class LoketController extends Controller
         }
     }
 
+    public function antrianLoketCheck()
+    {
+        $user = Auth::user();
+        $tanggal = Carbon::today();
+        
+        $loket = Loket::with('loketPetugas')
+            ->whereHas('loketPetugas', function ($query) use ($user, $tanggal) {
+                $query->where('id_user', $user->id)
+                    ->where('tanggal', $tanggal)
+                    ->whereNull('waktu_checkout');
+            })
+            ->first();
+
+        if (!$loket) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Anda belum memilih loket. Silakan pilih loket terlebih dahulu.'
+            ], 400);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $loket
+        ]);
+    }
+
+
 
 }

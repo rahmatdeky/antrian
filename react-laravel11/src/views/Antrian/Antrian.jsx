@@ -1,9 +1,14 @@
 import React from 'react'
-import { Divider, Row, Col, Tag, Table, Space, Button } from 'antd'
+import { Divider, Row, Col, Tag, Table, Space, Button, message, Spin } from 'antd'
 import { PhoneOutlined, RedoOutlined, CheckOutlined } from '@ant-design/icons'
+import { useEffect, useState } from 'react'
+import axiosClient from '../../axios-client'
 import moment from 'moment'
 
 const Antrian = () => {
+  const [selectedLoket, setSelectedLoket] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const fakeDataAntrian = [
     { id: 1, nomor: 'A 001', id_status: 1, loket: {} },
@@ -70,12 +75,40 @@ const Antrian = () => {
     console.log(`Selesai antrean ${id}`);
   };
 
+  const handleGetDataLoket = () => {
+    setLoading(true);
+    axiosClient.get('antrian/loket/pilih')
+        .then(({ data }) => {
+          setLoading(false);
+          setSelectedLoket(data.data);
+        })
+        .catch( err => {
+          const response = err.response;
+          if (response) {
+            setLoading(false);
+            messageApi.open({
+              type: response.data.status,
+              content: response.data.message,
+            })
+          }
+        } )
+  }
+
+  useEffect(() => {
+    handleGetDataLoket();
+  }, [])
+
   return (
     <>
+    <Spin spinning={loading}>
+      {contextHolder}
       <h1>Antrian</h1>
       <Divider />
-      <Row>
-        <Col span={24}>
+      <Row justify="space-between">
+        <Col span={12}>
+          <Tag style={{ fontSize: '16px', padding: '8px 16px', borderRadius: '10px' }} color="#1677FF" >{selectedLoket?.nama_loket}</Tag>
+        </Col>
+        <Col span={12}>
           <Tag style={{ float: 'right', fontSize: '16px', padding: '8px 16px', borderRadius: '10px' }} color="#1677FF" >{moment().format('DD-MM-YYYY')}</Tag>
         </Col>
       </Row>
@@ -85,6 +118,7 @@ const Antrian = () => {
       columns={tabelAntrian}
       dataSource={formattedData}
       bordered ></Table>
+      </Spin>
     </>
   )
 }

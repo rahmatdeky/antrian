@@ -44,6 +44,9 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/loket/pilih/{id}', [LoketController::class, 'pilihLoket']);
     Route::get('/loket/checkout/{id}', [LoketController::class, 'checkoutLoket']);
 
+    // Antrian
+    Route::get('antrian/loket/pilih', [LoketController::class, 'antrianLoketCheck']);
+
     // Referensi
     Route::get('/referensi/bidang', [ReferensiController::class, 'bidang']);
     Route::get('/referensi/role', [ReferensiController::class, 'refRole']);

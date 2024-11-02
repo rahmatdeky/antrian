@@ -173,7 +173,7 @@ const Loket = () => {
   useEffect(() => {
     handleGetDataLoket();
     // Enable pusher logging - don't include this in production
-    Pusher.logToConsole = true;
+    // Pusher.logToConsole = true;
 
     // Initialize Pusher
     const pusher = new Pusher('3noeceoo4vqaomp92yg0', {
