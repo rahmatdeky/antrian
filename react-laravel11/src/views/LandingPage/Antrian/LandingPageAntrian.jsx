@@ -56,27 +56,30 @@ useEffect(() => {
   handleGetDataAntrian();
   const pusher = new Pusher('3noeceoo4vqaomp92yg0', {
     cluster: 'ap1',
-    enabledTransports: ['ws'],
-    forceTLS: false,
-    wsHost: '127.0.0.1',
-    wsPort: 8080,
+    enabledTransports: ['ws'],    // Menggunakan WebSocket sebagai transport
+    forceTLS: false,              // Menonaktifkan TLS
+    wsHost: '127.0.0.1',          // WebSocket host lokal
+    wsPort: 8080
   });
 
   const channel = pusher.subscribe('panggil-antrian-channel');
-  channel.bind('panggil-antrian-event', function(data) {
-    console.log("Data from Pusher:", data); // Debugging
-    handleGetDataAntrian();
-    if (data.nomor_antrian && data.loket) {
-      alert(`Nomor antrian ${data.nomor_antrian} ke loket ${data.loket}`);
-    } else {
-      console.error("Data is missing 'nomor_antrian' or 'loket'");
-    }
-  });
 
-  return () => {
-    pusher.unsubscribe('panggil-antrian-channel');
-  };
-}, []);
+  channel.bind('panggil-antrian-event', function(data) {
+    handleGetDataAntrian();
+    alert(JSON.stringify(data));
+
+    // Mengambil nomor antrian dan loket dari data
+    const nomorAntrian = data.message.nomor_antrian;
+    const loket = data.message.loket;
+
+    // Membuat pesan suara
+    const message = `Nomor antrian ${nomorAntrian} ke loket ${loket}`;
+
+    // Menggunakan SpeechSynthesis API untuk memutar suara
+    const utterance = new SpeechSynthesisUtterance(message);
+    speechSynthesis.speak(utterance);
+  });
+}, [])
 
   return (
     <>
@@ -87,7 +90,7 @@ useEffect(() => {
           <Row justify='center'>
             <Col className='col-loket-dipanggil-1' span={24}>
               <Card className='card-loket-dipanggil' bordered={false} bodyStyle={{ padding: 10 }}>
-                <h1 className='h1-loket-dipanggil'> { item.loket.nama_loket } </h1>
+                <h1 className='h1-loket-dipanggil'> { item.loket.nama_loket ? item.loket.nama_loket : 'N/A' } </h1>
               </Card>
             </Col>
           </Row>
@@ -96,7 +99,7 @@ useEffect(() => {
               <Row>
                 <Col span={24}>
                   <Card className="card-waktu-dipanggil" bordered={false} bodyStyle={{ padding: 0 }}>
-                    <h1 className='h1-waktu-dipanggil'> { item.waktu_panggil } </h1>
+                    <h1 className='h1-waktu-dipanggil'> { item.waktu_panggil ? item.waktu_panggil : 'N/A' } </h1>
                   </Card>
                 </Col>
                 <Col span={24}>
@@ -108,7 +111,7 @@ useEffect(() => {
           </Row>
           <Row justify='center' align='middle'>
             <Col className="col-loket-dipanggil" span={24}>
-              <h1 className="nomor-loket-dipanggil">{ item.nomor_antrian }</h1>
+              <h1 className="nomor-loket-dipanggil">{ item.nomor_antrian ? item.nomor_antrian : 'N/A' }</h1>
             </Col>
           </Row>
         </Card>
@@ -122,13 +125,13 @@ useEffect(() => {
                 <Row >
                   <Col span={24}>
                     <Card className="card-loket-card2-6" bordered={false} bodyStyle={{ padding: '10px' }}>
-                      <h1 className="h1-loket-card2-6">{ item.loket.nama_loket }</h1>
+                      <h1 className="h1-loket-card2-6">{ item.loket.nama_loket ? item.loket.nama_loket : 'N/A' }</h1>
                     </Card>
                   </Col>
                 </Row>
                 <Row>
                   <Col span={24}>
-                    <h1 className='h1-nomor-card2-6'> {item.nomor_antrian} </h1>
+                    <h1 className='h1-nomor-card2-6'> {item.nomor_antrian ? item.nomor_antrian : 'N/A' } </h1>
                   </Col>
                 </Row>
               </Col>
@@ -136,7 +139,7 @@ useEffect(() => {
                 <Row justify="center" align="bottom">
                   <Col lg={18} xl={18} sm={18} md={18} xs={18}>
                     <Card className="card-waktu-card2-6" bordered={false} bodyStyle={{ padding: '10px' }}>
-                      <h3 className="h3-waktu-card2-6"> {item.waktu_panggil} </h3>
+                      <h3 className="h3-waktu-card2-6"> {item.waktu_panggil ? item.waktu_panggil : 'N/A'} </h3>
                     </Card>
                   </Col>
                 </Row>
@@ -174,13 +177,13 @@ useEffect(() => {
                   <Row >
                     <Col span={24}>
                       <Card className="card-loket-card2-6" bordered={false} bodyStyle={{ padding: '10px' }}>
-                        <h1 className="h1-loket-card2-6">{ item.loket.nama_loket }</h1>
+                        <h1 className="h1-loket-card2-6">{ item.loket.nama_loket ? item.loket.nama_loket : 'N/A' }</h1>
                       </Card>
                     </Col>
                   </Row>
                   <Row>
                     <Col span={24}>
-                      <h1 className='h1-nomor-card2-6'> {item.nomor_antrian} </h1>
+                      <h1 className='h1-nomor-card2-6'> {item.nomor_antrian ? item.nomor_antrian : 'N/A' } </h1>
                     </Col>
                   </Row>
                 </Col>
@@ -188,7 +191,7 @@ useEffect(() => {
                   <Row justify="center" align="bottom">
                     <Col lg={18} xl={18} sm={18} md={18} xs={18}>
                       <Card className="card-waktu-card2-6" bordered={false} bodyStyle={{ padding: '10px' }}>
-                        <h3 className="h3-waktu-card2-6"> {item.waktu_panggil} </h3>
+                        <h3 className="h3-waktu-card2-6"> {item.waktu_panggil ? item.waktu_panggil : 'N/A'} </h3>
                       </Card>
                     </Col>
                   </Row>

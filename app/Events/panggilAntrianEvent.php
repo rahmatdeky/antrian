@@ -14,13 +14,13 @@ class panggilAntrianEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $id_antrian;
+    public $message;
     /**
      * Create a new event instance.
      */
-    public function __construct($id_antrian)
+    public function __construct($message)
     {
-        $this->id_antrian = $id_antrian;
+        $this->message = $message;
     }
 
     /**

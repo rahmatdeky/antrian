@@ -147,11 +147,27 @@ class AntrianController extends Controller
                 'message' => 'Antrian ini bukan berada di loket ini',
             ], 404);
         }
+        $panggilUlang = Antrian::where('id', $id)->update([
+            'waktu_panggil' => Carbon::now()
+        ]);
 
-            return response()->json([
-                'status' => 'success',
-            'message' => 'Berhasil memanggil ulang antrian',
-            ]);
+        $antrianLengkap = Antrian::with(['pegawai', 'loket'])
+        ->where('id', $id)
+        ->first();
+        $kodeLayanan = $antrianLengkap->loket->layanan->kode_antrian ?? ''; // Dapatkan kode_antrian dari layanan
+        $formattedNomorAntrian = $kodeLayanan . ' ' . sprintf('%03d', $antrianLengkap->nomor_antrian);
+
+        $message = [
+            'nomor_antrian' => $formattedNomorAntrian,
+            'loket' => $antrianLengkap->loket->nama_loket
+        ];
+
+        event(new panggilAntrianEvent($message));
+
+        return response()->json([
+            'status' => 'success',
+        'message' => 'Berhasil memanggil ulang antrian',
+        ]);
     }
 
     public function selesaiAntrian($id, $loket)
