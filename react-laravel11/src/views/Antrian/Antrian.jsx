@@ -4,6 +4,7 @@ import { PhoneOutlined, RedoOutlined, CheckOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react'
 import axiosClient from '../../axios-client'
 import moment from 'moment'
+import Pusher from 'pusher-js'
 
 const { confirm } = Modal;
 const Antrian = () => {
@@ -65,8 +66,13 @@ const Antrian = () => {
         )),
       done: antrian
         .filter(item => item.id_status === 3)
-        .map(item => item.nomor_antrian)
-        .join(', ')
+        .map(item => (
+          <Row key={item.id}>
+            <Col span={24}>
+            {item.nomor_antrian}
+            </Col>
+          </Row>
+        ))
     }
   ];
   
@@ -227,6 +233,19 @@ const Antrian = () => {
 
   useEffect(() => {
     handleGetDataLoket();
+    const pusher = new Pusher('3noeceoo4vqaomp92yg0', {
+      cluster: 'ap1',
+      enabledTransports: ['ws'],    // Menggunakan WebSocket sebagai transport
+      forceTLS: false,              // Menonaktifkan TLS
+      wsHost: '127.0.0.1',          // WebSocket host lokal
+      wsPort: 8080
+    });
+
+    const channel = pusher.subscribe('panggil-antrian-channel');
+
+    channel.bind('panggil-antrian-event', function(data) {
+      handleGetDataAntrianByLayanan(selectedLoket?.id_layanan);
+    });
   }, [])
 
   return (

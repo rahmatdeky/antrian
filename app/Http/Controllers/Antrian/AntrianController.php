@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Dompdf\Dompdf;
 use Illuminate\Support\Facades\Auth;
+use App\Events\panggilAntrianEvent;
 
 
 class AntrianController extends Controller
@@ -96,6 +97,8 @@ class AntrianController extends Controller
 
     public function panggilAntrian($id, $loket)
     {
+        date_default_timezone_set('Asia/Jakarta');
+
         $user = Auth::user()->load('pegawai');
 
         $telahPanggil = Antrian::where('id', $id)
@@ -116,6 +119,7 @@ class AntrianController extends Controller
                 'waktu_panggil' => Carbon::now(),
                 'nip' => $user->pegawai->nip
             ]);
+            event(new panggilAntrianEvent($id));
             return response()->json([
                 'status' => 'success',
                 'message' => 'Berhasil memilih antrian',
@@ -131,6 +135,8 @@ class AntrianController extends Controller
 
     public function panggilUlangAntrian($id, $loket)
     {
+        date_default_timezone_set('Asia/Jakarta');
+
         $checkLoket = Antrian::where('id', $id)
         ->where('id_loket', $loket)
         ->exists();
@@ -150,6 +156,8 @@ class AntrianController extends Controller
 
     public function selesaiAntrian($id, $loket)
     {
+        date_default_timezone_set('Asia/Jakarta');
+
         $checkLoket = Antrian::where('id', $id)
         ->where('id_loket', $loket)
         ->exists();
@@ -166,6 +174,7 @@ class AntrianController extends Controller
                 'id_status' => 3,
                 'waktu_selesai' => Carbon::now()
             ]);
+            event(new panggilAntrianEvent($id));
             return response()->json([
                 'status' => 'success',
                 'message' => 'Berhasil menyelesaikan antrian',
