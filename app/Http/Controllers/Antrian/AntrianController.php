@@ -148,10 +148,10 @@ class AntrianController extends Controller
             ], 404);
         }
 
-        return response()->json([
-            'status' => 'success',
+            return response()->json([
+                'status' => 'success',
             'message' => 'Berhasil memanggil ulang antrian',
-        ]);
+            ]);
     }
 
     public function selesaiAntrian($id, $loket)
@@ -186,5 +186,30 @@ class AntrianController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function getAntrianGuest()
+    {
+        // Set timezone ke Asia/Jakarta
+        date_default_timezone_set('Asia/Jakarta');
+        $today = Carbon::today();
+
+        // Ambil antrian yang memiliki id_status 2, tanggal hari ini, dan panggilan terakhir untuk setiap id_loket
+        $antrian = Antrian::with(['pegawai', 'loket'])
+            ->where('id_status', 2)
+            ->whereDate('tanggal', $today)
+            ->orderBy('waktu_panggil', 'desc')
+            ->get()
+            ->unique('id_loket'); // Mengambil antrian terakhir pada setiap id_loket
+
+        foreach ($antrian as $key => $value) {
+            $kodeLayanan = $value->loket->layanan->kode_antrian ?? ''; // Dapatkan kode_antrian dari layanan
+            $antrian[$key]->nomor_antrian = $kodeLayanan . ' ' . sprintf('%03d', $value->nomor_antrian);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $antrian
+        ]);
     }
 }

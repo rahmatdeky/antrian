@@ -2,10 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Card, Flex, Button, Row, Col } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import './LandingPageAntrian.css';
+import Pusher from 'pusher-js';
+import axiosClient from '../../../axios-client';
 
 
 const LandingPageAntrian = () => {
   const [showMore, setShowMore] = useState(false);
+  const [dataAntrian, setDataAntrian] = useState([]);
   const MoreCardRef = useRef(null);
 
   const handleToggleShowMore = () => {
@@ -18,7 +21,7 @@ const LandingPageAntrian = () => {
     }
   }, [showMore]);
 
-  const dataAntrian = [
+  const fakeDataAntrian = [
     { id: 1, loket: 'Loket 1', nomor: 'A 001', waktuPanggil: '2024/10/22 08:01:00', petugas: 'Rahmat Deky' },
     { id: 2, loket: 'Loket 2', nomor: 'A 002', waktuPanggil: '2024/10/22 08:02:00', petugas: 'Rahmat Deky'  },
     { id: 3, loket: 'Loket 3', nomor: 'A 003', waktuPanggil: '2024/10/22 08:03:00', petugas: 'Rahmat Deky'  },
@@ -32,22 +35,59 @@ const LandingPageAntrian = () => {
   ];
 
   const sortedDataAntrian = [...dataAntrian].sort((a, b) => {
-    return new Date(b.waktuPanggil) - new Date(a.waktuPanggil);
+    return new Date(b.waktu_panggil) - new Date(a.waktu_panggil);
   });
 
   const card1And3 = sortedDataAntrian.slice(0, 1); // Data untuk card 1 & 3
   const card2To6 = sortedDataAntrian.slice(1, 5); // Data untuk card 2, 4, 5, 6
   const remainingCards = sortedDataAntrian.slice(5); // Data untuk additional cards
 
+  const handleGetDataAntrian = async (callback) => {
+    try {
+      const response = await axiosClient.get('/antrian/guest');
+      setDataAntrian(Object.values(response.data.data)); // Ubah objek ke array
+      if (callback) callback(); // Panggil callback setelah data diperbarui
+    } catch (error) {
+      console.error('Error fetching data antrian:', error);
+    }
+};
+
+useEffect(() => {
+  handleGetDataAntrian();
+  const pusher = new Pusher('3noeceoo4vqaomp92yg0', {
+    cluster: 'ap1',
+    enabledTransports: ['ws'],
+    forceTLS: false,
+    wsHost: '127.0.0.1',
+    wsPort: 8080,
+  });
+
+  const channel = pusher.subscribe('panggil-antrian-channel');
+  channel.bind('panggil-antrian-event', function(data) {
+    console.log("Data from Pusher:", data); // Debugging
+    handleGetDataAntrian();
+    if (data.nomor_antrian && data.loket) {
+      alert(`Nomor antrian ${data.nomor_antrian} ke loket ${data.loket}`);
+    } else {
+      console.error("Data is missing 'nomor_antrian' or 'loket'");
+    }
+  });
+
+  return () => {
+    pusher.unsubscribe('panggil-antrian-channel');
+  };
+}, []);
+
   return (
     <>
       <div className="grid-container">
         {/* Card 1 & 3 tampil secara statis */}
-        <Card className="card card1-3" style={{ gridArea: 'one-three'}} bodyStyle={{ padding: 0 }}>
+        {card1And3.map((item, index) => (
+        <Card key={index} className="card card1-3" style={{ gridArea: 'one-three'}} bodyStyle={{ padding: 0 }}>
           <Row justify='center'>
             <Col className='col-loket-dipanggil-1' span={24}>
               <Card className='card-loket-dipanggil' bordered={false} bodyStyle={{ padding: 10 }}>
-                <h1 className='h1-loket-dipanggil'> { card1And3[0].loket } </h1>
+                <h1 className='h1-loket-dipanggil'> { item.loket.nama_loket } </h1>
               </Card>
             </Col>
           </Row>
@@ -56,38 +96,39 @@ const LandingPageAntrian = () => {
               <Row>
                 <Col span={24}>
                   <Card className="card-waktu-dipanggil" bordered={false} bodyStyle={{ padding: 0 }}>
-                    <h1 className='h1-waktu-dipanggil'> { card1And3[0].waktuPanggil } </h1>
+                    <h1 className='h1-waktu-dipanggil'> { item.waktu_panggil } </h1>
                   </Card>
                 </Col>
                 <Col span={24}>
                   <h1 className='h1-dilayani-oleh'>Dilayani Oleh</h1>
-                  <h1 className='h1-petugas-dipanggil'> { card1And3[0].petugas } </h1>
+                  <h1 className='h1-petugas-dipanggil'> { item.pegawai ? item.pegawai.nama : 'N/A' } </h1>
                 </Col>
               </Row>
             </Col>
           </Row>
           <Row justify='center' align='middle'>
             <Col className="col-loket-dipanggil" span={24}>
-              <h1 className="nomor-loket-dipanggil">{ card1And3[0].nomor }</h1>
+              <h1 className="nomor-loket-dipanggil">{ item.nomor_antrian }</h1>
             </Col>
           </Row>
         </Card>
+        ))}
 
         {/* Looping untuk card awal (2, 4, 5, 6) */}
-        {card2To6.map((card, index) => (
-          <Card key={card.id} className="card card2-6" style={{ gridArea: `area-${index + 2}`}} bodyStyle={{ padding: 0 }}>
+        {card2To6.map((item, index) => (
+          <Card key={index} className="card card2-6" style={{ gridArea: `area-${index + 2}`}} bodyStyle={{ padding: 0 }}>
             <Row>
               <Col span={12} className='col-card2-6'>
                 <Row >
                   <Col span={24}>
                     <Card className="card-loket-card2-6" bordered={false} bodyStyle={{ padding: '10px' }}>
-                      <h1 className="h1-loket-card2-6">{ card.loket }</h1>
+                      <h1 className="h1-loket-card2-6">{ item.loket.nama_loket }</h1>
                     </Card>
                   </Col>
                 </Row>
                 <Row>
                   <Col span={24}>
-                    <h1 className='h1-nomor-card2-6'> {card.nomor} </h1>
+                    <h1 className='h1-nomor-card2-6'> {item.nomor_antrian} </h1>
                   </Col>
                 </Row>
               </Col>
@@ -95,14 +136,14 @@ const LandingPageAntrian = () => {
                 <Row justify="center" align="bottom">
                   <Col lg={18} xl={18} sm={18} md={18} xs={18}>
                     <Card className="card-waktu-card2-6" bordered={false} bodyStyle={{ padding: '10px' }}>
-                      <h3 className="h3-waktu-card2-6"> {card.waktuPanggil} </h3>
+                      <h3 className="h3-waktu-card2-6"> {item.waktu_panggil} </h3>
                     </Card>
                   </Col>
                 </Row>
                 <Row align="bottom" style={{ marginTop: '10px'}}>
                   <Col span={24}>
                     <h2 className='h2-dilayani-oleh-card2-6'>Dilayani Oleh</h2>
-                    <h2 className='h2-petugas-oleh-card2-6'> { card.petugas } </h2>
+                    <h2 className='h2-petugas-oleh-card2-6'> { item.pegawai ? item.pegawai.nama : 'N/A' } </h2>
                   </Col>
                 </Row>
               </Col>
@@ -126,20 +167,20 @@ const LandingPageAntrian = () => {
       {/* Card tambahan jika "Selengkapnya" diklik */}
       {showMore && (
         <div className="more-cards">
-          {remainingCards.map(card => (
-            <Card key={card.id} className="card" style={{ minHeight: '24vh', border: '1px solid #7DBAF2' }} bodyStyle={{ padding: 0 }}>
+          {remainingCards.map((item, index) => (
+            <Card key={index} className="card" style={{ minHeight: '24vh', border: '1px solid #7DBAF2' }} bodyStyle={{ padding: 0 }}>
               <Row>
                 <Col span={12} className='col-card2-6'>
                   <Row >
                     <Col span={24}>
                       <Card className="card-loket-card2-6" bordered={false} bodyStyle={{ padding: '10px' }}>
-                        <h1 className="h1-loket-card2-6">{ card.loket }</h1>
+                        <h1 className="h1-loket-card2-6">{ item.loket.nama_loket }</h1>
                       </Card>
                     </Col>
                   </Row>
                   <Row>
                     <Col span={24}>
-                      <h1 className='h1-nomor-card2-6'> {card.nomor} </h1>
+                      <h1 className='h1-nomor-card2-6'> {item.nomor_antrian} </h1>
                     </Col>
                   </Row>
                 </Col>
@@ -147,14 +188,14 @@ const LandingPageAntrian = () => {
                   <Row justify="center" align="bottom">
                     <Col lg={18} xl={18} sm={18} md={18} xs={18}>
                       <Card className="card-waktu-card2-6" bordered={false} bodyStyle={{ padding: '10px' }}>
-                        <h3 className="h3-waktu-card2-6"> {card.waktuPanggil} </h3>
+                        <h3 className="h3-waktu-card2-6"> {item.waktu_panggil} </h3>
                       </Card>
                     </Col>
                   </Row>
                   <Row align="bottom" style={{ marginTop: '10px'}}>
                     <Col span={24}>
                       <h2 className='h2-dilayani-oleh-card2-6'>Dilayani Oleh</h2>
-                      <h2 className='h2-petugas-oleh-card2-6'> { card.petugas } </h2>
+                      <h2 className='h2-petugas-oleh-card2-6'> { item.pegawai ? item.pegawai.nama : 'N/A' } </h2>
                     </Col>
                   </Row>
                 </Col>

@@ -69,3 +69,6 @@ Route::middleware([CorsMiddleware::class])->group(function () {
     Route::get('/layanan/guest/ambil/{id}', [AntrianController::class, 'ambilAntrian']);
     // Tambahkan route lain di sini
 });
+
+// Landing Page Antrian
+Route::get('/antrian/guest', [AntrianController::class, 'getAntrianGuest']);

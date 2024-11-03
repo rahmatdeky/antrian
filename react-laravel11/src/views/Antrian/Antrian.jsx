@@ -127,8 +127,12 @@ const Antrian = () => {
   const handlePanggil = (id) => {
     setLoading(true);
     axiosClient.get(`antrian/panggil/${id}/${selectedLoket.id}`)
-        .then(() => {
+        .then(({ data }) => {
           setLoading(false);
+          messageApi.open({
+            type: data.status,
+            content: data.message,
+          })
           handleGetDataAntrianByLayanan(selectedLoket.id_layanan);
         })
         .catch( err => {
@@ -196,7 +200,6 @@ const Antrian = () => {
     setLoading(true);
     axiosClient.get('antrian/loket/pilih')
         .then(({ data }) => {
-          setLoading(false);
           setSelectedLoket(data.data);
           handleGetDataAntrianByLayanan(data.data.id_layanan);
         })
@@ -213,7 +216,6 @@ const Antrian = () => {
   }
 
   const handleGetDataAntrianByLayanan = (id) => {
-    setLoading(true);
     axiosClient.get(`antrian/loket/${id}`)
         .then(({ data }) => {
           setLoading(false);
@@ -244,7 +246,7 @@ const Antrian = () => {
     const channel = pusher.subscribe('panggil-antrian-channel');
 
     channel.bind('panggil-antrian-event', function(data) {
-      handleGetDataAntrianByLayanan(selectedLoket?.id_layanan);
+      handleGetDataLoket();
     });
   }, [])
 
