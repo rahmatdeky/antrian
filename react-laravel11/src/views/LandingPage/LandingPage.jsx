@@ -57,10 +57,35 @@ const LandingPage = () => {
         })
   }
 
-  const handleAmbilAntrian = (id) => {
+  const handleAmbilAntrian = async (id) => {
     setIsLoading(true);
-    axiosClient.get(`/layanan/guest/ambil/${id}`)
-  }
+    try {
+        const response = await axiosClient.get(`/layanan/guest/ambil/${id}`, {
+            responseType: 'blob', // Mengatur respons sebagai Blob untuk PDF
+
+        });
+        
+        // Membuat URL untuk Blob dan membuka jendela baru untuk menampilkan PDF
+        const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        
+        // Membuka PDF dalam tab/jendela baru
+        window.open(pdfUrl, '_blank');
+
+        setIsLoading(false);
+        
+    } catch (error) {
+        console.error("Error fetching PDF:", error);
+        messageApi.open({
+            type: 'error',
+            content: 'Terjadi kesalahan saat mengambil antrian.',
+        })
+        setIsLoading(false);
+    }
+
+    // axiosClient.get(`/layanan/guest/ambil/${id}`)
+  };
+
 
   useEffect(() => {
     handleGetDataLayanan();

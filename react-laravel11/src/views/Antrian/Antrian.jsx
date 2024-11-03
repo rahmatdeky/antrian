@@ -1,13 +1,15 @@
 import React from 'react'
-import { Divider, Row, Col, Tag, Table, Space, Button, message, Spin } from 'antd'
+import { Divider, Row, Col, Tag, Table, Space, Button, message, Spin, Modal } from 'antd'
 import { PhoneOutlined, RedoOutlined, CheckOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react'
 import axiosClient from '../../axios-client'
 import moment from 'moment'
 
+const { confirm } = Modal;
 const Antrian = () => {
   const [selectedLoket, setSelectedLoket] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [antrian, setAntrian] = useState([]);
   const [messageApi, contextHolder] = message.useMessage();
 
   const fakeDataAntrian = [
@@ -20,59 +22,168 @@ const Antrian = () => {
   const formattedData = [
     {
       key: 1,
-      waiting: fakeDataAntrian
+      waiting: antrian
         .filter(item => item.id_status === 1)
         .map(item => (
-          <div key={item.id}>
-            {item.nomor}
+          <Row key={item.id} style={{ marginBottom: '8px' }}>
+            <Col span={12}>
+            {item.nomor_antrian}
+            </Col>
+            <Col span={12}>
             <Button
               icon={<PhoneOutlined />}
-              style={{ marginLeft: '8px' }}
-              onClick={() => handlePanggil(item.id)}
+              style={{float: 'right'}}
+              onClick={() => confirmPanggil(item.id)}
             />
-          </div>
+            </Col>
+          </Row>
         )),
-      active: fakeDataAntrian
+      active: antrian
         .filter(item => item.id_status === 2)
         .map(item => (
-          <div key={item.id}>
-            {item.nomor} - {item.loket?.nama_loket || 'Belum diambil'}
+          <Row key={item.id}>
+            <Col span={12}>
+            {item.nomor_antrian} - {item.loket?.nama_loket}
+            </Col>
+            <Col span={12}>
+            <div style={{float: 'right'}}>
             <Button
               icon={<RedoOutlined />}
               style={{ marginLeft: '8px' }}
-              onClick={() => handlePanggilUlang(item.id)}
+              onClick={() => confirmPanggilUlang(item.id)}
+              disabled={item.id_loket !== selectedLoket?.id}
             />
             <Button
               icon={<CheckOutlined />}
               style={{ marginLeft: '8px' }}
-              onClick={() => handleSelesai(item.id)}
+              onClick={() => confirmSelesai(item.id)}
+              disabled={item.id_loket !== selectedLoket?.id}
             />
-          </div>
+            </div>
+            </Col>
+          </Row>
         )),
-      done: fakeDataAntrian
+      done: antrian
         .filter(item => item.id_status === 3)
-        .map(item => item.nomor)
+        .map(item => item.nomor_antrian)
         .join(', ')
     }
   ];
   
   const tabelAntrian = [
-    { title: 'Waiting', key: 'waiting', dataIndex: 'waiting', align: 'center' },
-    { title: 'Active', key: 'active', dataIndex: 'active', align: 'center' },
-    { title: 'Done', key: 'done', dataIndex: 'done', align: 'center' }
+    { title: 'Waiting', key: 'waiting', dataIndex: 'waiting', align: 'center', width: '33%' },
+    { title: 'Active', key: 'active', dataIndex: 'active', align: 'center', width: '33%' },
+    { title: 'Done', key: 'done', dataIndex: 'done', align: 'center', width: '33%' }
   ];
+
+  const confirmPanggil = (id) => {
+    confirm({
+      title: 'Panggil antrean?',
+      icon: <PhoneOutlined />,
+      content: 'Apakah anda yakin ingin memanggil antrean ini?',
+      okText: 'Ya',
+      okType: 'primary',
+      cancelText: 'Tidak',
+      onOk() {
+        handlePanggil(id);
+      }
+    });
+  }
+
+  const confirmPanggilUlang = (id) => {
+    confirm({
+      title: 'Panggil ulang antrean?',
+      icon: <RedoOutlined />,
+      content: 'Apakah anda yakin ingin memanggil ulang antrean ini?',
+      okText: 'Ya',
+      okType: 'primary',
+      cancelText: 'Tidak',
+      onOk() {
+        handlePanggilUlang(id);
+      }
+    })
+  }
+
+  const confirmSelesai = (id) => {
+    confirm({
+      title: 'Selesaikan antrean?',
+      icon: <CheckOutlined />,
+      content: 'Apakah anda yakin ingin menyelesaikan antrean ini?',
+      okText: 'Ya',
+      okType: 'primary',
+      cancelText: 'Tidak',
+      onOk() {
+        handleSelesai(id);
+      }
+    })
+  }
   
-  // Fungsi untuk menangani klik tombol
   const handlePanggil = (id) => {
-    console.log(`Panggil antrean ${id}`);
+    setLoading(true);
+    axiosClient.get(`antrian/panggil/${id}/${selectedLoket.id}`)
+        .then(() => {
+          setLoading(false);
+          handleGetDataAntrianByLayanan(selectedLoket.id_layanan);
+        })
+        .catch( err => {
+          const response = err.response;
+          if (response) {
+            setLoading(false);
+            messageApi.open({
+              type: response.data.status,
+              content: response.data.message,
+            })
+            handleGetDataAntrianByLayanan(selectedLoket.id_layanan);
+          }
+        } )
   };
   
   const handlePanggilUlang = (id) => {
-    console.log(`Panggil ulang antrean ${id}`);
+    setLoading(true);
+    axiosClient.get(`antrian/panggil-ulang/${id}/${selectedLoket.id}`)
+        .then(({ data }) => {
+          setLoading(false);
+          messageApi.open({
+            type: data.status,
+            content: data.message,
+          })
+        })
+        .catch( err => {
+          const response = err.response;
+          if (response) {
+            setLoading(false);
+            messageApi.open({
+              type: response.data.status,
+              content: response.data.message,
+            })
+            handleGetDataAntrianByLayanan(selectedLoket.id_layanan);
+          }
+        } )
   };
   
   const handleSelesai = (id) => {
-    console.log(`Selesai antrean ${id}`);
+    setLoading(true);
+    axiosClient.get(`antrian/selesai/${id}/${selectedLoket.id}`)
+        .then(({ data }) => {
+          setLoading(false);
+          messageApi.open({
+            type: data.status,
+            content: data.message,
+          })
+          handleGetDataAntrianByLayanan(selectedLoket.id_layanan);
+        })
+        .catch( err => {
+          const response = err.response;
+          if (response) {
+            setLoading(false);
+            messageApi.open({
+              type: response.data.status,
+              content: response.data.message,
+            })
+            handleGetDataAntrianByLayanan(selectedLoket.id_layanan);
+          }
+        } )
+    // console.log(`Selesai antrean ${id}`);
   };
 
   const handleGetDataLoket = () => {
@@ -81,6 +192,26 @@ const Antrian = () => {
         .then(({ data }) => {
           setLoading(false);
           setSelectedLoket(data.data);
+          handleGetDataAntrianByLayanan(data.data.id_layanan);
+        })
+        .catch( err => {
+          const response = err.response;
+          if (response) {
+            setLoading(false);
+            messageApi.open({
+              type: response.data.status,
+              content: response.data.message,
+            })
+          }
+        } )
+  }
+
+  const handleGetDataAntrianByLayanan = (id) => {
+    setLoading(true);
+    axiosClient.get(`antrian/loket/${id}`)
+        .then(({ data }) => {
+          setLoading(false);
+          setAntrian(data.data);
         })
         .catch( err => {
           const response = err.response;

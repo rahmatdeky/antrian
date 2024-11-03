@@ -7,6 +7,7 @@ use App\Http\Controllers\ReferensiController;
 use App\Http\Controllers\Antrian\LayananController;
 use App\Http\Controllers\Antrian\LoketController;
 use App\Http\Controllers\Antrian\AntrianController;
+use App\Http\Middleware\CorsMiddleware;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -47,6 +48,10 @@ Route::middleware('auth:sanctum')->group(function() {
 
     // Antrian
     Route::get('antrian/loket/pilih', [LoketController::class, 'antrianLoketCheck']);
+    Route::get('antrian/loket/{id}', [AntrianController::class, 'getAntrianByLayanan']);
+    Route::get('antrian/panggil/{id}/{loket}', [AntrianController::class, 'panggilAntrian']);
+    Route::get('antrian/panggil-ulang/{id}/{loket}', [AntrianController::class, 'panggilUlangAntrian']);
+    Route::get('antrian/selesai/{id}/{loket}', [AntrianController::class, 'selesaiAntrian']);
 
     // Referensi
     Route::get('/referensi/bidang', [ReferensiController::class, 'bidang']);
@@ -59,4 +64,8 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Landing Page
 Route::get('/layanan/guest', [LayananController::class, 'getLayananGuest']);
-Route::get('/layanan/guest/ambil/{id}', [AntrianController::class, 'ambilAntrian']);
+// Route::get('/layanan/guest/ambil/{id}', [AntrianController::class, 'ambilAntrian']);
+Route::middleware([CorsMiddleware::class])->group(function () {
+    Route::get('/layanan/guest/ambil/{id}', [AntrianController::class, 'ambilAntrian']);
+    // Tambahkan route lain di sini
+});
