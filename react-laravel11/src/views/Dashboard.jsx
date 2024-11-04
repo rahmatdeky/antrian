@@ -108,6 +108,7 @@ const Dashboard = () => {
   return (
     <>
     <Spin spinning={loading}>
+      {contextHolder}
       <h1>Dashboard</h1>
       <Divider />
       <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
@@ -142,7 +143,7 @@ const Dashboard = () => {
         </Col>
       </Row>
       <Row style={{ marginTop: 20 }} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-        {dataToday.perLayanan.map((item) => (
+        {dataToday.perLayanan?.map((item) => (
         <Col key={item.id} xs={24} md={6} style={{ marginTop: 20 }}>
           <Card>
             <Flex vertical gap="middle">
