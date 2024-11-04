@@ -49,6 +49,7 @@ const LandingPageAntrian = () => {
 
     if (window.responsiveVoice) {
       window.responsiveVoice.speak(message, 'Indonesian Female', {
+        rate: 0.9,
         onend: () => {
           isSpeaking.current = false; // Tandai bahwa pesan telah selesai dibacakan
           setVoiceQueue((prevQueue) => prevQueue.slice(1)); // Hapus pesan pertama dari antrian
@@ -83,7 +84,6 @@ useEffect(() => {
 
   channel.bind('panggil-antrian-event', function(data) {
     handleGetDataAntrian();
-    // alert(JSON.stringify(data));
 
     // Mengambil nomor antrian dan loket dari data
     const nomorAntrian = data.message.nomor_antrian;
@@ -93,11 +93,7 @@ useEffect(() => {
     const message = `Nomor antrian ${nomorAntrian} ke loket ${loket}`;
 
     setVoiceQueue((prevQueue) => [...prevQueue, message]);
-    // if (window.responsiveVoice) {
-    //   window.responsiveVoice.speak(message, 'Indonesian Female');
-    // } else {
-    //   console.log('responsiveVoice not supported');
-    // }
+    // if (win
 
     return () => {
       channel.unbind('panggil-antrian-event');
