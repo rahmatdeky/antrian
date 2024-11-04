@@ -281,4 +281,57 @@ class AntrianController extends Controller
             'pageSize' => $pageSize,
         ]);
     }
+
+    public function dashboardTotal()
+    {
+        try {
+            $totalAntrian = Antrian::count();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $totalAntrian
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mendapatkan antrian',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function dashboardToday()
+    {
+        date_default_timezone_set('Asia/Jakarta');
+        $today = Carbon::today();
+
+        try {
+            $totalAntrian = Antrian::whereDate('tanggal', $today)->count();
+            $totalDone = Antrian::where('id_status', 3)->whereDate('tanggal', $today)->count();
+            
+            $perLayanan = Antrian::with('layanan')
+            ->whereDate('tanggal', $today)
+            ->selectRaw('id_layanan, 
+                        count(*) as total,
+                        SUM(CASE WHEN id_status = 1 THEN 1 ELSE 0 END) as total_status_1,
+                        SUM(CASE WHEN id_status = 3 THEN 1 ELSE 0 END) as total_status_3')
+            ->groupBy('id_layanan')
+            ->get();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'totalAntrian' => $totalAntrian,
+                    'totalDone' => $totalDone,
+                    'perLayanan' => $perLayanan
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mendapatkan antrian',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

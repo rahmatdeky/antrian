@@ -59,6 +59,10 @@ Route::middleware('auth:sanctum')->group(function() {
 
     // Riwayat Antrian
     Route::get('/antrian/riwayat', [AntrianController::class, 'getRiwayatAntrian']);
+
+    // Dashboard
+    Route::get('/dashboard/total', [AntrianController::class, 'dashboardTotal']);
+    Route::get('/dashboard/today', [AntrianController::class, 'dashboardToday']);
 });
 
 // Auth
