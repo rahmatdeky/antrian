@@ -121,7 +121,20 @@ class AntrianController extends Controller
                 'waktu_panggil' => Carbon::now(),
                 'nip' => $user->pegawai->nip
             ]);
-            event(new panggilAntrianEvent($id));
+
+            $antrianLengkap = Antrian::with(['pegawai', 'loket'])
+            ->where('id', $id)
+            ->first();
+            $kodeLayanan = $antrianLengkap->loket->layanan->kode_antrian ?? ''; // Dapatkan kode_antrian dari layanan
+            $formattedNomorAntrian = $kodeLayanan . ' ' . sprintf('%03d', $antrianLengkap->nomor_antrian);
+
+            $message = [
+                'nomor_antrian' => $formattedNomorAntrian,
+                'loket' => $antrianLengkap->loket->nama_loket
+            ];
+
+            event(new panggilAntrianEvent($message));
+            
             return response()->json([
                 'status' => 'success',
                 'message' => 'Berhasil memilih antrian',
@@ -192,7 +205,6 @@ class AntrianController extends Controller
                 'id_status' => 3,
                 'waktu_selesai' => Carbon::now()
             ]);
-            event(new panggilAntrianEvent($id));
             return response()->json([
                 'status' => 'success',
                 'message' => 'Berhasil menyelesaikan antrian',

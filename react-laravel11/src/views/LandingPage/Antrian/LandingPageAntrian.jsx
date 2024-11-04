@@ -10,6 +10,8 @@ const LandingPageAntrian = () => {
   const [showMore, setShowMore] = useState(false);
   const [dataAntrian, setDataAntrian] = useState([]);
   const MoreCardRef = useRef(null);
+  const [voiceQueue, setVoiceQueue] = useState([]);
+  const isSpeaking = useRef(false);
 
   const handleToggleShowMore = () => {
     setShowMore(!showMore);
@@ -20,19 +22,6 @@ const LandingPageAntrian = () => {
       MoreCardRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [showMore]);
-
-  const fakeDataAntrian = [
-    { id: 1, loket: 'Loket 1', nomor: 'A 001', waktuPanggil: '2024/10/22 08:01:00', petugas: 'Rahmat Deky' },
-    { id: 2, loket: 'Loket 2', nomor: 'A 002', waktuPanggil: '2024/10/22 08:02:00', petugas: 'Rahmat Deky'  },
-    { id: 3, loket: 'Loket 3', nomor: 'A 003', waktuPanggil: '2024/10/22 08:03:00', petugas: 'Rahmat Deky'  },
-    { id: 4, loket: 'Loket 4', nomor: 'A 004', waktuPanggil: '2024/10/22 08:04:00', petugas: 'Rahmat Deky'  },
-    { id: 5, loket: 'Frontdesk', nomor: 'F 010', waktuPanggil: '2024/10/22 08:05:00', petugas: 'Rahmat Deky'  },
-    { id: 6, loket: 'Perbendaharaan', nomor: 'B 001', waktuPanggil: '2024/10/22 08:06:00', petugas: 'Rahmat Deky'  },
-    { id: 7, loket: 'Pengambilan Dokumen', nomor: 'P 001', waktuPanggil: '2024/10/22 08:07:00', petugas: 'Rahmat Deky'  },
-    { id: 8, loket: 'Client Coordinator', nomor: 'C 001', waktuPanggil: '2024/10/22 08:08:00', petugas: 'Rahmat Deky'  },
-    { id: 9, loket: 'Manifest', nomor: 'M 001', waktuPanggil: '2024/10/22 08:09:00', petugas: 'Rahmat Deky'  },
-    { id: 10, loket: 'Client Coordinator', nomor: 'E 001', waktuPanggil: '2024/10/22 08:09:10', petugas: 'Rahmat Deky'  },
-  ];
 
   const sortedDataAntrian = [...dataAntrian].sort((a, b) => {
     return new Date(b.waktu_panggil) - new Date(a.waktu_panggil);
@@ -50,7 +39,35 @@ const LandingPageAntrian = () => {
     } catch (error) {
       console.error('Error fetching data antrian:', error);
     }
-};
+  };
+
+  const playNextInQueue = () => {
+    if (isSpeaking.current || voiceQueue.length === 0) return;
+
+    isSpeaking.current = true; // Tandai bahwa saat ini sedang berbicara
+    const message = voiceQueue[0]; // Ambil pesan pertama dalam antrian
+
+    if (window.responsiveVoice) {
+      window.responsiveVoice.speak(message, 'Indonesian Female', {
+        onend: () => {
+          isSpeaking.current = false; // Tandai bahwa pesan telah selesai dibacakan
+          setVoiceQueue((prevQueue) => prevQueue.slice(1)); // Hapus pesan pertama dari antrian
+        },
+      });
+    } else {
+      console.log('responsiveVoice not supported');
+      isSpeaking.current = false;
+      setVoiceQueue((prevQueue) => prevQueue.slice(1));
+    }
+  };
+
+  // const testSpeech = (nomorAntrian, loket) => {
+  //   if (window.responsiveVoice) {
+  //     window.responsiveVoice.speak('Nomor Antrian F 001 ke loket frontdesk', 'Indonesian Female');
+  //   } else {
+  //     console.log('responsiveVoice not supported');
+  //   }
+  // }
 
 useEffect(() => {
   handleGetDataAntrian();
@@ -66,7 +83,7 @@ useEffect(() => {
 
   channel.bind('panggil-antrian-event', function(data) {
     handleGetDataAntrian();
-    alert(JSON.stringify(data));
+    // alert(JSON.stringify(data));
 
     // Mengambil nomor antrian dan loket dari data
     const nomorAntrian = data.message.nomor_antrian;
@@ -75,15 +92,32 @@ useEffect(() => {
     // Membuat pesan suara
     const message = `Nomor antrian ${nomorAntrian} ke loket ${loket}`;
 
-    // Menggunakan SpeechSynthesis API untuk memutar suara
-    const utterance = new SpeechSynthesisUtterance(message);
-    speechSynthesis.speak(utterance);
+    setVoiceQueue((prevQueue) => [...prevQueue, message]);
+    // if (window.responsiveVoice) {
+    //   window.responsiveVoice.speak(message, 'Indonesian Female');
+    // } else {
+    //   console.log('responsiveVoice not supported');
+    // }
+
+    return () => {
+      channel.unbind('panggil-antrian-event');
+      pusher.unsubscribe('panggil-antrian-channel');
+      pusher.disconnect();
+    };
   });
 }, [])
+
+useEffect(() => {
+  // Play suara dari antrian jika ada pesan baru
+  if (voiceQueue.length > 0) {
+    playNextInQueue();
+  }
+}, [voiceQueue]); // Hanya dipanggil jika voiceQueue berubah
 
   return (
     <>
       <div className="grid-container">
+      {/* <Button onClick={testSpeech}>test</Button> */}
         {/* Card 1 & 3 tampil secara statis */}
         {card1And3.map((item, index) => (
         <Card key={index} className="card card1-3" style={{ gridArea: 'one-three'}} bodyStyle={{ padding: 0 }}>
