@@ -56,6 +56,9 @@ Route::middleware('auth:sanctum')->group(function() {
     // Referensi
     Route::get('/referensi/bidang', [ReferensiController::class, 'bidang']);
     Route::get('/referensi/role', [ReferensiController::class, 'refRole']);
+
+    // Riwayat Antrian
+    Route::get('/antrian/riwayat', [AntrianController::class, 'getRiwayatAntrian']);
 });
 
 // Auth

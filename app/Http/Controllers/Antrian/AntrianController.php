@@ -242,4 +242,43 @@ class AntrianController extends Controller
             'data' => $antrian
         ]);
     }
+
+    public function getRiwayatAntrian(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $idLayanan = $request->input('id_layanan');
+        $page = $request->input('page', 1);
+        $pageSize = $request->input('pageSize', 10);
+
+        $query = Antrian::query();
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('tanggal', [$startDate, $endDate]);
+        }
+
+        if ($idLayanan) {
+            $query->where('id_layanan', $idLayanan);
+        }
+
+        $total = $query->count();
+
+        $data = $query->with(['loket', 'pegawai'])
+                    ->orderBy('tanggal', 'desc')
+                    ->offset(($page - 1) * $pageSize)
+                    ->limit($pageSize)
+                    ->get();
+        
+        foreach ($data as $key => $value) {
+            $kodeLayanan = $value->layanan->kode_antrian ?? ''; // Dapatkan kode_antrian dari layanan
+            $data[$key]->nomor_antrian = $kodeLayanan . ' ' . sprintf('%03d', $value->nomor_antrian);
+        }
+
+        return response()->json([
+            'data' => $data,
+            'total' => $total,
+            'page' => $page,
+            'pageSize' => $pageSize,
+        ]);
+    }
 }

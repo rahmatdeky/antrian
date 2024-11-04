@@ -20,7 +20,7 @@ body {
     background-color: #f6f6f6;
 }
 
-input {
+/* input {
     outline: 0;
     background: #ffffff;
     width: 100%;
@@ -30,11 +30,11 @@ input {
     box-sizing: border-box;
     font-size: 14px;
     transition: all 0.3s;
-}
+} */
 
-input:focus {
+/* input:focus {
     border-color: #5b08a7;
-}
+} */
 
 .btn,
 .btn-add,
@@ -92,7 +92,7 @@ input:focus {
     text-align: center;
 }
 
-table {
+/* table {
     width: 100%;
     border-spacing: 0;
     border-collapse: collapse;
@@ -108,7 +108,7 @@ table > tbody > tr > td {
     padding: 0.5rem 0.5rem;
     border-bottom: 1px solid #efefef;
     white-space: nowrap;
-}
+} */
 
 .card {
     background-color: #FFF;

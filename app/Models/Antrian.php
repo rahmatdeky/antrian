@@ -22,4 +22,9 @@ class Antrian extends Model
     {
         return $this->belongsTo(Pegawai::class, 'nip', 'nip');
     }
+
+    public function layanan()
+    {
+        return $this->belongsTo(Layanan::class, 'id_layanan', 'id');
+    }
 }
