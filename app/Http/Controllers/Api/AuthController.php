@@ -24,7 +24,7 @@ class AuthController extends Controller
             return response([
                 'type' => 'error',
                 'message' => 'Salah username atau password'
-            ]);
+            ], 401);
         }
         /** @var User $user */
         $user = Auth::user();
