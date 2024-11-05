@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('golongan');
             $table->string('jabatan');
-            $table->string('id_bidang');
+            $table->unsignedBigInteger('id_bidang');
         });
     }
 

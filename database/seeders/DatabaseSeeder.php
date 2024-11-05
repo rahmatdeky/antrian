@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\Bidang;
 use App\Models\RefRole;
 use App\Models\Pegawai;
+use App\Models\Status;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -58,6 +59,21 @@ class DatabaseSeeder extends Seeder
             'golongan' => 'Admin',
             'jabatan' => 'Admin',
             'id_bidang' => 1
+        ]);
+
+        Status::create([
+            [
+                'id' => 1,
+                'status' => 'Waiting'
+            ],
+            [
+                'id' => 2,
+                'status' => 'Active'
+            ],
+            [
+                'id' => 3,
+                'status' => 'Done'
+            ]
         ]);
     }
 }
