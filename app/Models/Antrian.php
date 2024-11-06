@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Antrian extends Model
 {
+    use HasFactory;
+
     protected $table = 'antrian';
     protected $primaryKey = 'id';
     public $incrementing = false;
