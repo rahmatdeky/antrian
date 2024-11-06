@@ -8,6 +8,9 @@ use App\Models\Bidang;
 use App\Models\RefRole;
 use App\Models\Pegawai;
 use App\Models\Status;
+use App\Models\Layanan;
+use App\Models\JenisLayanan;
+use App\Models\Loket;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -73,6 +76,55 @@ class DatabaseSeeder extends Seeder
             [
                 'id' => 3,
                 'status' => 'Done'
+            ]
+        ]);
+
+        Layanan::create([
+            [
+                'id' => 1,
+                'nama_layanan' => 'Pabean',
+                'kode_antrian' => 'A'
+            ],
+            [
+                'id' => 2,
+                'nama_layanan' => 'Perbendaharaan',
+                'kode_antrian' => 'B'
+            ]
+        ]);
+
+        JenisLayanan::create([
+            [
+                'id' => 1,
+                'nama_jenis_layanan' => 'Komparasi BC 1.1',
+                'id_layanan' => 1
+            ],
+            [
+                'id' => 2,
+                'nama_jenis_layanan' => 'Perubahan Data Billing',
+                'id_layanan' => 2
+            ]
+        ]);
+
+        Loket::create([
+            [
+                'id' => 1,
+                'nama_loket' => 'Loket 1',
+                'id_layanan' => 1
+            ],
+            [
+                'id' => 2,
+                'nama_loket' => 'Loket 2',
+                'id_layanan' => 1
+            ],
+            [
+                'id' => 3,
+                'nama_loket' => 'Loket 3',
+                'id_layanan' => 1
+            ],
+            [
+                'id' => 4,
+                'nama_loket' => 'Perbendaharaan',
+                'id_layanan' => 2
             ]
         ]);
     }

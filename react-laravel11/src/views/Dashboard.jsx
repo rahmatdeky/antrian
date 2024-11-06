@@ -2,6 +2,7 @@ import React from 'react'
 import { Divider, Row, Col, Card, Flex, Tag, Spin, message } from 'antd'
 import { useState, useEffect } from 'react'
 import axiosClient from '../axios-client'
+import moment from 'moment'
 
 
 const Dashboard = () => {
@@ -139,7 +140,7 @@ const Dashboard = () => {
       </Row>
       <Row style={{ marginTop: 20 }}>
         <Col>
-          <Tag style={{ fontSize: '32px', padding: '12px 24px', borderRadius: '10px', fontWeight: 'bold' }} color="#1677FF">04 - 11 - 2024</Tag>
+          <Tag style={{ fontSize: '32px', padding: '12px 24px', borderRadius: '10px', fontWeight: 'bold' }} color="#1677FF"> {moment().format('DD MMMM YYYY')}</Tag>
         </Col>
       </Row>
       <Row style={{ marginTop: 20 }} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
