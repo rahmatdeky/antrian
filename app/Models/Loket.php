@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Loket extends Model
 {
+    use HasFactory;
     protected $table = 'loket';
     protected $primaryKey = 'id';
     public $incrementing = false;

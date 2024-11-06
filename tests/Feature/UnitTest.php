@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Antrian;
+use App\Models\Layanan;
+use App\Models\Loket;
 use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
@@ -326,6 +328,105 @@ class UnitTest extends TestCase
 
         $response->assertStatus(204);;
     }
+
+    /**
+     * Test adding a new Layanan.
+     *
+     * @return void
+     */
+    public function test_add_layanan_successfully()
+    {
+        $user = User::factory()->create([
+            'username' => 'rahmat.deky',
+            'password' => bcrypt('password')
+        ]);
+        Sanctum::actingAs($user);
+        // Arrange: Prepare data for the request
+        $data = [
+            'layanan' => 'Test',
+            'kode_antrian' => 'T',
+        ];
+
+        // Act: Make a POST request to the addLayanan endpoint
+        $response = $this->postJson('/api/layanan/add', $data);
+
+        // Assert: Check if the response is as expected
+        $response->assertStatus(200)
+                 ->assertJson([
+                     'status' => 'success',
+                     'message' => 'Layanan berhasil ditambahkan',
+                 ]);
+
+        // Assert: Verify if the Layanan was added to the database
+        $this->assertDatabaseHas('layanan', [
+            'nama_layanan' => 'Test',
+            'kode_antrian' => 'T',
+        ]);
+    }
+
+    /**
+     * Test failure when missing required fields.
+     *
+     * @return void
+     */
+    public function test_add_layanan_failure_due_to_missing_fields()
+    {
+        $user = User::factory()->create([
+            'username' => 'rahmat.deky',
+            'password' => bcrypt('password')
+        ]);
+        Sanctum::actingAs($user);
+        // Arrange: Prepare incomplete data
+        $data = [
+            'layanan' => '', // Missing layanan name
+            'kode_antrian' => '', // Missing kode_antrian
+        ];
+
+        // Act: Make a POST request with incomplete data
+        $response = $this->postJson('/api/layanan/add', $data);
+
+        // Assert: Check if the response contains an error
+        $response->assertStatus(500)
+                 ->assertJson([
+                     'status' => 'error',
+                     'message' => 'Gagal menambahkan Layanan',
+                 ]);
+    }
+
+    public function test_add_loket_successfully()
+    {
+        $user = User::factory()->create([
+            'username' => 'rahmat.deky',
+            'password' => bcrypt('password')
+        ]);
+        Sanctum::actingAs($user);
+
+        // Arrange: Buat Layanan yang valid
+        $layanan = Layanan::factory()->create();
+
+        // Data yang akan dikirim untuk menambah Loket
+        $data = [
+            'nama_loket' => 'Loket 1',
+            'id_layanan' => 1,
+        ];
+
+        // Act: Kirim POST request untuk menambah Loket
+        $response = $this->postJson('/api/loket/add', $data);
+
+        // Assert: Pastikan status dan pesan respon sesuai
+        $response->assertStatus(200)
+                ->assertJson([
+                    'status' => 'success',
+                    'message' => 'Loket berhasil ditambahkan',
+                ]);
+
+        // Assert: Pastikan Loket berhasil ditambahkan ke database
+        $this->assertDatabaseHas('loket', [
+            'nama_loket' => 'Loket 1',
+            'id_layanan' => 1,
+        ]);
+    }
+
 
 
 }

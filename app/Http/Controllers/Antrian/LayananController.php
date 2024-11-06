@@ -21,7 +21,7 @@ class LayananController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Layanan berhasil ditambahkan',
-            ]);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -143,7 +143,7 @@ class LayananController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Layanan dan Jenis Layanan berhasil dihapus',
-            ]);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
