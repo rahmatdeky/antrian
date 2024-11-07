@@ -1,6 +1,6 @@
 /* Mengatur background page */
 .login-page {
-    background-image: url('/../../../img/foto-kantor.jpeg'); /* Ganti dengan path gambar background */
+    background-image: url('../../../img/foto-kantor.jpeg'); /* Ganti dengan path gambar background */
     background-size: cover;
     background-position: center;
     height: 100vh;
