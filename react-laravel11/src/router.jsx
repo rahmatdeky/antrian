@@ -122,6 +122,9 @@ const router = createBrowserRouter([
         path: "/403",
         element: <Forbidden />,
     },
-]);
+],
+{
+    basename: "/react-app",
+});
 
 export default router
