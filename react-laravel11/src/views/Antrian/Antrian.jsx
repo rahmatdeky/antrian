@@ -233,21 +233,40 @@ const Antrian = () => {
         } )
   }
 
+  // useEffect(() => {
+  //   handleGetDataLoket();
+  //   const pusher = new Pusher('3noeceoo4vqaomp92yg0', {
+  //     cluster: 'ap1',
+  //     enabledTransports: ['ws'],    // Menggunakan WebSocket sebagai transport
+  //     forceTLS: false,              // Menonaktifkan TLS
+  //     wsHost: '127.0.0.1',          // WebSocket host lokal
+  //     wsPort: 8080
+  //   });
+
+  //   const channel = pusher.subscribe('panggil-antrian-channel');
+
+  //   channel.bind('panggil-antrian-event', function(data) {
+  //     handleGetDataLoket();
+  //   });
+  // }, [])
+
   useEffect(() => {
     handleGetDataLoket();
-    const pusher = new Pusher('3noeceoo4vqaomp92yg0', {
-      cluster: 'ap1',
-      enabledTransports: ['ws'],    // Menggunakan WebSocket sebagai transport
-      forceTLS: false,              // Menonaktifkan TLS
-      wsHost: '127.0.0.1',          // WebSocket host lokal
-      wsPort: 8080
-    });
-
-    const channel = pusher.subscribe('panggil-antrian-channel');
-
-    channel.bind('panggil-antrian-event', function(data) {
-      handleGetDataLoket();
-    });
+            // Initialize Pusher
+            const pusher = new Pusher('6d50297c33411d7978b2', {
+              cluster: 'ap1'
+          });
+          // Subscribe to the channel
+          const channel = pusher.subscribe('panggil-antrian-channel');
+          // Bind the event and alert the data when received
+          channel.bind('panggil-antrian-event', function(data) {
+            handleGetDataLoket();
+          });
+          // Cleanup function to unsubscribe from channel when component unmounts
+          return () => {
+              channel.unbind_all();
+              channel.unsubscribe();
+          };
   }, [])
 
   return (
