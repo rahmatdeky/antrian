@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Layanan;
 use App\Models\JenisLayanan;
 use App\Models\Loket;
+use App\Events\LayananEvent;
+use App\Models\Antrian;
+use Carbon\Carbon;
 
 class LayananController extends Controller
 {
@@ -17,6 +20,7 @@ class LayananController extends Controller
                 'nama_layanan' => $request->layanan,
                 'kode_antrian' => $request->kode_antrian
             ]);
+            event(new LayananEvent());
 
             return response()->json([
                 'status' => 'success',
@@ -74,6 +78,7 @@ class LayananController extends Controller
                 'nama_layanan' => $request->nama_layanan,
                 'kode_antrian' => $request->kode_antrian
             ]);
+            event(new LayananEvent());
 
             return response()->json([
                 'status' => 'success',
@@ -95,6 +100,7 @@ class LayananController extends Controller
                 'nama_jenis_layanan' => $request->nama_jenis_layanan,
                 'id_layanan' => $request->id_layanan
             ]);
+            event(new LayananEvent());
 
             return response()->json([
                 'status' => 'success',
@@ -128,7 +134,24 @@ class LayananController extends Controller
 
     public function deleteLayanan($id)
     {
+        date_default_timezone_set('Asia/Jakarta');
+        $today = Carbon::now()->format('Y-m-d');
+
+        $antrian = Antrian::where('id_layanan', $id)
+        ->whereDate('tanggal', $today)
+        ->where('id_status', 2)
+        ->get();
+
+        if ($antrian->isNotEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Tidak dapat menghapus layanan, karena masih terkait dengan beberapa antrian. selesaikan antrian terlebih dahulu',
+                'data' => $antrian
+            ], 400);
+        }
+        
         $loket = Loket::select('nama_loket')->where('id_layanan', $id)->get();
+
         if ($loket->isNotEmpty()) {
             return response()->json([
                 'status' => 'error',
@@ -140,6 +163,7 @@ class LayananController extends Controller
         try {
             $layanan = Layanan::where('id', $id)->delete();
             $jenisLayanan = JenisLayanan::where('id_layanan', $id)->delete();
+            event(new LayananEvent());
             return response()->json([
                 'status' => 'success',
                 'message' => 'Layanan dan Jenis Layanan berhasil dihapus',

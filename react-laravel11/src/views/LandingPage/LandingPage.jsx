@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Row, Col, Button, Flex, Card, FloatButton, Spin, message, Modal } from 'antd';
 import { useEffect, useState } from 'react';
 import axiosClient from '../../axios-client';
+import Pusher from 'pusher-js';
 import "./LandingPage.css";
 
 const { confirm } = Modal;
@@ -89,6 +90,20 @@ const LandingPage = () => {
 
   useEffect(() => {
     handleGetDataLayanan();
+    const pusher = new Pusher('6d50297c33411d7978b2', {
+      cluster: 'ap1'
+    });
+    // Subscribe to the channel
+    const channel = pusher.subscribe('layanan-channel');
+    // Bind the event and alert the data when received
+    channel.bind('layanan-event', function(data) {
+      handleGetDataLayanan();
+    });
+    // Cleanup function to unsubscribe from channel when component unmounts
+    return () => {
+        channel.unbind_all();
+        channel.unsubscribe();
+    };
   }, [])
 
   return (

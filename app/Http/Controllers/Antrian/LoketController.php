@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Loket;
 use App\Models\LoketPetugas;
+use App\Models\Antrian;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Events\PilihLoketEvent;
@@ -45,7 +46,22 @@ class LoketController extends Controller
 
     public function deleteLoket($id)
     {
+        date_default_timezone_set('Asia/Jakarta');
+        $today = Carbon::today();
+
         try {
+            $checkLoket = Antrian::where('id_loket', $id)
+            ->where('tanggal', $today)
+            ->where('id_status', 2)
+            ->exists();
+
+            if ($checkLoket) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Loket tidak dapat dihapus karena masih ada antrian yang belum selesai',
+                ], 500);
+            }
+
             $delete = Loket::where('id', $id)->delete();
             return response()->json([
                 'status' => 'success',
@@ -184,8 +200,25 @@ class LoketController extends Controller
     public function checkoutLoket($id)
     {
         date_default_timezone_set('Asia/Jakarta');
+        $today = Carbon::today();
 
         try {
+            $idLoket = LoketPetugas::where('id', $id)
+            ->select('id_loket')
+            ->first();
+
+            $antrian = Antrian::where('id_loket', $idLoket->id_loket)
+            ->where('tanggal', $today)
+            ->where('id_status', 2)
+            ->exists();
+
+            if ($antrian) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Loket ini masih memiliki antrian aktif, silahkan selesaikan antrian aktif terlebih dahulu',
+                ], 400);
+            }
+
             LoketPetugas::where('id', $id)
                 ->update([
                     'waktu_checkout' => Carbon::now()

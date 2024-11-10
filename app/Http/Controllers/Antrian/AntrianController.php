@@ -54,6 +54,11 @@ class AntrianController extends Controller
         $dompdf->setPaper('A6', 'portrait');
         
         $dompdf->render();
+        $message = [
+            'nomor_antrian' => $formattedNomorAntrian,
+            'loket' => $kodeLayanan->nama_layanan
+        ];
+        event(new panggilAntrianEvent($message));
         
         return response($dompdf->output(), 200)
         ->header('Content-Type', 'application/pdf')
@@ -100,8 +105,21 @@ class AntrianController extends Controller
     public function panggilAntrian($id, $loket)
     {
         date_default_timezone_set('Asia/Jakarta');
+        $today = Carbon::today();
 
         $user = Auth::user()->load('pegawai');
+
+        $antrianAktif = Antrian::where('id_loket', $loket)
+        ->where('id_status', 2) // Pastikan id_status ini menandakan status "aktif"
+        ->whereDate('tanggal', $today)
+        ->exists();
+
+        if ($antrianAktif) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Loket ini masih memiliki antrian aktif',
+            ], 400);
+        }
 
         $telahPanggil = Antrian::where('id', $id)
             ->whereNotNull('waktu_panggil')
@@ -205,6 +223,11 @@ class AntrianController extends Controller
                 'id_status' => 3,
                 'waktu_selesai' => Carbon::now()
             ]);
+            $message = [
+                'nomor_antrian'
+            ];
+    
+            event(new panggilAntrianEvent($message));
             return response()->json([
                 'status' => 'success',
                 'message' => 'Berhasil menyelesaikan antrian',

@@ -104,6 +104,7 @@ const LandingPageAntrian = () => {
 // }, [])
 
 useEffect(() => {
+  handleGetDataAntrian();
   // Initialize Pusher
   const pusher = new Pusher('6d50297c33411d7978b2', {
     cluster: 'ap1'
@@ -128,7 +129,7 @@ useEffect(() => {
       channel.unbind_all();
       channel.unsubscribe();
   };
-})
+}, [])
 
 useEffect(() => {
   // Play suara dari antrian jika ada pesan baru
