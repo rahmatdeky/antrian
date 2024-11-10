@@ -170,54 +170,54 @@ const Loket = () => {
     })
   }
 
-  // useEffect(() => {
-  //   handleGetDataLoket();
-  //   // Enable pusher logging - don't include this in production
-  //   // Pusher.logToConsole = true;
-
-  //   // Initialize Pusher
-  //   const pusher = new Pusher('3noeceoo4vqaomp92yg0', {
-  //       cluster: 'ap1',
-  //       enabledTransports: ['ws'],    // Menggunakan WebSocket sebagai transport
-  //       forceTLS: false,              // Menonaktifkan TLS
-  //       wsHost: '127.0.0.1',          // WebSocket host lokal
-  //       wsPort: 8080 
-  //   });
-
-  //   // Subscribe to the channel
-  //   const channel = pusher.subscribe('loket-channel');
-
-  //   // Bind the event and alert the data when received
-  //   channel.bind('pilih-loket-event', function(data) {
-  //       // alert(JSON.stringify(data));
-  //       handleGetDataLoket();
-  //   });
-
-  //   // Cleanup function to unsubscribe from channel when component unmounts
-  //   return () => {
-  //       channel.unbind_all();
-  //       channel.unsubscribe();
-  //   };
-  // }, [])
-
   useEffect(() => {
     handleGetDataLoket();
+    // Enable pusher logging - don't include this in production
+    // Pusher.logToConsole = true;
+
     // Initialize Pusher
-    const pusher = new Pusher('6d50297c33411d7978b2', {
-      cluster: 'ap1'
-  });
-  // Subscribe to the channel
-  const channel = pusher.subscribe('loket-channel');
-  // Bind the event and alert the data when received
-  channel.bind('pilih-loket-event', function(data) {
-      handleGetDataLoket();
-  });
-  // Cleanup function to unsubscribe from channel when component unmounts
-  return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
-  };
+    const pusher = new Pusher('3noeceoo4vqaomp92yg0', {
+        cluster: 'ap1',
+        enabledTransports: ['ws'],    // Menggunakan WebSocket sebagai transport
+        forceTLS: false,              // Menonaktifkan TLS
+        wsHost: '127.0.0.1',          // WebSocket host lokal
+        wsPort: 8080 
+    });
+
+    // Subscribe to the channel
+    const channel = pusher.subscribe('loket-channel');
+
+    // Bind the event and alert the data when received
+    channel.bind('pilih-loket-event', function(data) {
+        // alert(JSON.stringify(data));
+        handleGetDataLoket();
+    });
+
+    // Cleanup function to unsubscribe from channel when component unmounts
+    return () => {
+        channel.unbind_all();
+        channel.unsubscribe();
+    };
   }, [])
+
+  // useEffect(() => {
+  //   handleGetDataLoket();
+  //   // Initialize Pusher
+  //   const pusher = new Pusher('6d50297c33411d7978b2', {
+  //     cluster: 'ap1'
+  // });
+  // // Subscribe to the channel
+  // const channel = pusher.subscribe('loket-channel');
+  // // Bind the event and alert the data when received
+  // channel.bind('pilih-loket-event', function(data) {
+  //     handleGetDataLoket();
+  // });
+  // // Cleanup function to unsubscribe from channel when component unmounts
+  // return () => {
+  //     channel.unbind_all();
+  //     channel.unsubscribe();
+  // };
+  // }, [])
 
   return (
     <>

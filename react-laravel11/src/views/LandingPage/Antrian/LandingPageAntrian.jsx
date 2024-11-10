@@ -70,66 +70,66 @@ const LandingPageAntrian = () => {
   //   }
   // }
 
-// useEffect(() => {
-//   handleGetDataAntrian();
-//   const pusher = new Pusher('3noeceoo4vqaomp92yg0', {
-//     cluster: 'ap1',
-//     enabledTransports: ['ws'],    // Menggunakan WebSocket sebagai transport
-//     forceTLS: false,              // Menonaktifkan TLS
-//     wsHost: '127.0.0.1',          // WebSocket host lokal
-//     wsPort: 8080
-//   });
-
-//   const channel = pusher.subscribe('panggil-antrian-channel');
-
-//   channel.bind('panggil-antrian-event', function(data) {
-//     handleGetDataAntrian();
-
-//     // Mengambil nomor antrian dan loket dari data
-//     const nomorAntrian = data.message.nomor_antrian;
-//     const loket = data.message.loket;
-
-//     // Membuat pesan suara
-//     const message = `Nomor antrian ${nomorAntrian} ke loket ${loket}`;
-
-//     setVoiceQueue((prevQueue) => [...prevQueue, message]);
-//     // if (win
-
-//     return () => {
-//       channel.unbind('panggil-antrian-event');
-//       pusher.unsubscribe('panggil-antrian-channel');
-//       pusher.disconnect();
-//     };
-//   });
-// }, [])
-
 useEffect(() => {
   handleGetDataAntrian();
-  // Initialize Pusher
-  const pusher = new Pusher('6d50297c33411d7978b2', {
-    cluster: 'ap1'
+  const pusher = new Pusher('3noeceoo4vqaomp92yg0', {
+    cluster: 'ap1',
+    enabledTransports: ['ws'],    // Menggunakan WebSocket sebagai transport
+    forceTLS: false,              // Menonaktifkan TLS
+    wsHost: '127.0.0.1',          // WebSocket host lokal
+    wsPort: 8080
   });
-  // Subscribe to the channel
+
   const channel = pusher.subscribe('panggil-antrian-channel');
-  // Bind the event and alert the data when received
+
   channel.bind('panggil-antrian-event', function(data) {
     handleGetDataAntrian();
 
-        // Mengambil nomor antrian dan loket dari data
-        const nomorAntrian = data.message.nomor_antrian;
-        const loket = data.message.loket;
-    
-        // Membuat pesan suara
-        const message = `Nomor antrian ${nomorAntrian} ke loket ${loket}`;
-    
-        setVoiceQueue((prevQueue) => [...prevQueue, message]);
+    // Mengambil nomor antrian dan loket dari data
+    const nomorAntrian = data.message.nomor_antrian;
+    const loket = data.message.loket;
+
+    // Membuat pesan suara
+    const message = `Nomor antrian ${nomorAntrian} ke loket ${loket}`;
+
+    setVoiceQueue((prevQueue) => [...prevQueue, message]);
+    // if (win
+
+    return () => {
+      channel.unbind('panggil-antrian-event');
+      pusher.unsubscribe('panggil-antrian-channel');
+      pusher.disconnect();
+    };
   });
-  // Cleanup function to unsubscribe from channel when component unmounts
-  return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
-  };
 }, [])
+
+// useEffect(() => {
+//   handleGetDataAntrian();
+//   // Initialize Pusher
+//   const pusher = new Pusher('6d50297c33411d7978b2', {
+//     cluster: 'ap1'
+//   });
+//   // Subscribe to the channel
+//   const channel = pusher.subscribe('panggil-antrian-channel');
+//   // Bind the event and alert the data when received
+//   channel.bind('panggil-antrian-event', function(data) {
+//     handleGetDataAntrian();
+
+//         // Mengambil nomor antrian dan loket dari data
+//         const nomorAntrian = data.message.nomor_antrian;
+//         const loket = data.message.loket;
+    
+//         // Membuat pesan suara
+//         const message = `Nomor antrian ${nomorAntrian} ke loket ${loket}`;
+    
+//         setVoiceQueue((prevQueue) => [...prevQueue, message]);
+//   });
+//   // Cleanup function to unsubscribe from channel when component unmounts
+//   return () => {
+//       channel.unbind_all();
+//       channel.unsubscribe();
+//   };
+// }, [])
 
 useEffect(() => {
   // Play suara dari antrian jika ada pesan baru
