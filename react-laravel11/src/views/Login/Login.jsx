@@ -13,6 +13,7 @@ export default function Login() {
     const [isLoading, setIsLoading] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
 
+
     
     const onFinish = (values) => {
         setIsLoading(true);
@@ -33,7 +34,7 @@ export default function Login() {
         })
         .catch(err => {
             const response = err.response;
-            if (response && response.status === 422) {
+            if (response) {
                 setIsLoading(false);
                 messageApi.open({
                     type: response.data.type,
@@ -48,7 +49,8 @@ export default function Login() {
             {contextHolder}
             <div className="login-container">
                 <div className="login-card">
-                    <img src="/../../../img/logo-bea-cukai.png" alt="Logo" className="logo" /> {/* Ganti dengan path logo */}
+                    {/* <img src="../../../img/logo-bea-cukai.png" alt="Logo" className="logo" /> */}
+                    <img src={`${import.meta.env.VITE_BASE_PATH}/img/logo-bea-cukai.png`} alt="Logo" className="logo" />
                     <h2>Antrian Loket Pelayanan</h2>
                     <p>Kantor Pelayanan Utama Bea dan Cukai Tipe B Batam</p>
                     <Form

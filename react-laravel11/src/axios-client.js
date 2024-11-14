@@ -16,7 +16,7 @@ axiosClient.interceptors.response.use((response) => {
     const {response} = error
     if (response.status === 401) {
         localStorage.removeItem('ACCESS_TOKEN');
-        window.location.href = '/login';
+        // window.location.href = `${import.meta.env.VITE_BASE_PATH}/login`;
     }
     throw error
 })
