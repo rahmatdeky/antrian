@@ -239,13 +239,13 @@ const Antrian = () => {
       cluster: 'ap1',
       enabledTransports: ['ws'],    // Menggunakan WebSocket sebagai transport
       forceTLS: false,              // Menonaktifkan TLS
-      wsHost: '127.0.0.1',          // WebSocket host lokal
+      wsHost: '192.168.16.10',          // WebSocket host lokal sesuaikan dengan alamat IP Anda
       wsPort: 8080
     });
 
-    const channel = pusher.subscribe('panggil-antrian-channel');
+    const channel = pusher.subscribe('panggil-antrian-petugas-channel');
 
-    channel.bind('panggil-antrian-event', function(data) {
+    channel.bind('panggil-antrian-petugas-event', function(data) {
       handleGetDataLoket();
     });
   }, [])

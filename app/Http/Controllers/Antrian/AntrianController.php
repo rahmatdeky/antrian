@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Dompdf\Dompdf;
 use Illuminate\Support\Facades\Auth;
 use App\Events\panggilAntrianEvent;
+use App\Events\panggilAntrianPetugasEvent;
 
 
 class AntrianController extends Controller
@@ -58,7 +59,7 @@ class AntrianController extends Controller
             'nomor_antrian' => $formattedNomorAntrian,
             'loket' => $kodeLayanan->nama_layanan
         ];
-        event(new panggilAntrianEvent($message));
+        event(new panggilAntrianPetugasEvent($message));
         
         return response($dompdf->output(), 200)
         ->header('Content-Type', 'application/pdf')
@@ -227,7 +228,7 @@ class AntrianController extends Controller
                 'nomor_antrian'
             ];
     
-            event(new panggilAntrianEvent($message));
+            event(new panggilAntrianPetugasEvent($message));
             return response()->json([
                 'status' => 'success',
                 'message' => 'Berhasil menyelesaikan antrian',
