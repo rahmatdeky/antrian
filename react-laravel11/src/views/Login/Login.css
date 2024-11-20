@@ -23,8 +23,17 @@
 
 /* Styling judul dan logo */
 .logo {
+    background-image: url('../../../img/logo-bea-cukai.png');
+    background-repeat: no-repeat;
+    background-size: contain ;
+    background-position: center;
     width: 100px;
+    height: 100px;
     margin-bottom: 15px;
+    border: none; /* Menghapus border */
+    outline: none; /* Menghapus outline */
+    display: inline-block;
+    box-shadow: none; /* Menghapus bayangan (jika ada) */
 }
 
 .login-card h2 {

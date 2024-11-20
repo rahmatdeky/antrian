@@ -49,8 +49,9 @@ export default function Login() {
             {contextHolder}
             <div className="login-container">
                 <div className="login-card">
+                    <div src="" alt="" className="logo" ></div>
                     {/* <img src="../../../img/logo-bea-cukai.png" alt="Logo" className="logo" /> */}
-                    <img src={`${import.meta.env.VITE_BASE_PATH}/img/logo-bea-cukai.png`} alt="Logo" className="logo" />
+                    {/* <img src={`${import.meta.env.VITE_BASE_PATH}/img/logo-bea-cukai.png`} alt="Logo" className="logo" /> */}
                     <h2>Antrian Loket Pelayanan</h2>
                     <p>Kantor Pelayanan Utama Bea dan Cukai Tipe B Batam</p>
                     <Form
